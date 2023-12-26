@@ -1,5 +1,7 @@
 package com.appname.happyAging.di
 
+import android.content.SharedPreferences
+import com.appname.happyAging.data.api.ApiConstants.BASE_URL
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.data.api.AuthInterceptor
 import com.appname.happyAging.data.api.HeaderInterceptor
@@ -7,6 +9,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Authenticator
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,6 +22,19 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 
 object ApiModule {
+
+    @Singleton
+    @Provides
+    fun provideHeaderInterceptor(autoLoginPreferences: SharedPreferences): HeaderInterceptor {
+        return HeaderInterceptor(autoLoginPreferences)
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthInterceptor(autoLoginPreferences: SharedPreferences): Authenticator {
+        return AuthInterceptor(autoLoginPreferences)
+    }
+
 
 
     @Singleton
@@ -54,7 +70,7 @@ object ApiModule {
         return Retrofit.Builder()
             .addConverterFactory(converterFactory)
             .client(okHttpClient)
-            .baseUrl("https://restaurant-app.run.goorm.site")
+            .baseUrl(BASE_URL)
             .build()
     }
 
