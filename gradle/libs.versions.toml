@@ -92,4 +92,6 @@ compose = ["lifecycle-viewmodel-compose", "navigation-compose", "hilt-navigation
 network = ["retrofit", "converter-gson", "okthhp-bom", "okhttp", "logging-interceptor"]
 hilts = ["hilt-android", "dagger-hilt-compiler"]
 android-ktx = ["core-ktx", "lifecycle-runtime-ktx"]
-android-compose = ["activity-compose", "compose-bom", "ui", "ui-graphics", "ui-tooling", "ui-tooling-preview", "ui-test-manifest", "material3"]
+android-compose = ["activity-compose", "compose-bom", "ui", "ui-graphics",  "ui-tooling-preview", "material3"]
+
+android-compose-debug = ["ui-tooling", "ui-test-manifest"]
