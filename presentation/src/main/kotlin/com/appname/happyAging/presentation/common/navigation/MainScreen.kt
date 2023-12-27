@@ -31,6 +31,7 @@ import androidx.navigation.compose.rememberNavController
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
+import com.appname.happyAging.presentation.senior.view.SeniorScreen
 
 enum class BottomNavRouter(
     val routePath: String,
@@ -52,15 +53,17 @@ fun MainScreen(navController: NavController) {
     Scaffold(
         bottomBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().drawWithContent{
-                    drawContent()
-                    drawLine(
-                        color = Colors.DIVIDER_GREY,
-                        strokeWidth = 1.dp.toPx(),
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, 0f)
-                    )
-                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(
+                            color = Colors.DIVIDER_GREY,
+                            strokeWidth = 1.dp.toPx(),
+                            start = Offset(0f, 0f),
+                            end = Offset(size.width, 0f)
+                        )
+                    },
                 horizontalArrangement = Arrangement.SpaceBetween
             ){
                 val navBackStackEntry by mainNavHostController.currentBackStackEntryAsState()
@@ -69,17 +72,20 @@ fun MainScreen(navController: NavController) {
                 items.forEach { item ->
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f).padding(
-                            vertical = Sizes.INTERVAL1,
-                        ).clickable {
-                            mainNavHostController.navigate(item.routePath) {
-                                popUpTo(navController.graph.startDestinationId) {
-                                    saveState = true
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(
+                                vertical = Sizes.INTERVAL1,
+                            )
+                            .clickable {
+                                mainNavHostController.navigate(item.routePath) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
                                 }
-                                launchSingleTop = true
-                                restoreState = true
                             }
-                        }
                     ){
                         Icon(imageVector = item.icon, contentDescription = null)
                         Text(text = item.korean, style = TextStyles.CONTENT_SMALL2_STYLE)
@@ -97,7 +103,7 @@ fun MainScreen(navController: NavController) {
                 Text("낙상예방 콘텐츠")
             }
             composable(route = BottomNavRouter.SENIOR_LIST.routePath) {
-                Text("시니어 목록")
+                SeniorScreen(navController = mainNavHostController)
             }
             composable(route = BottomNavRouter.PROFILE.routePath) {
                 Text("내정보")
