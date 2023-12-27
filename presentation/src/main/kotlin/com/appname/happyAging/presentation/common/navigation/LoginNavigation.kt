@@ -15,14 +15,12 @@ enum class LoginRouter(
     val routePath: String,
     val korean : String,
 ) {
-    LOGIN(LOGIN_ROUTE, "로그인"),
-    EMAIL_SIGNUP(EMAIL_SIGNUP_ROUTE, "회원가입"),
-    KAKAO_SIGNUP(KAKAO_SIGNUP_ROUTE, "회원가입"),
+    LOGIN("login", "로그인"),
+    EMAIL_SIGNUP("signup", "회원가입"),
+    KAKAO_SIGNUP("kakao-signup", "회원가입"),
 }
 
-const val LOGIN_ROUTE = "login"
-const val EMAIL_SIGNUP_ROUTE = "signup"
-const val KAKAO_SIGNUP_ROUTE = "kakao-signup"
+
 
 
 fun NavGraphBuilder.loginGraph(
@@ -47,17 +45,17 @@ fun NavGraphBuilder.loginGraph(
 fun NavController.navigateLogin(
     navOptions: androidx.navigation.NavOptions? = null,
 ) {
-    navigate(LOGIN_GRAPH_ROUTE_PATTERN, navOptions)
+    navigate(LoginRouter.LOGIN.routePath, navOptions)
 }
 
 fun NavController.navigateEmailSignup(
     navOptions: androidx.navigation.NavOptions? = null,
 ) {
-    navigate(EMAIL_SIGNUP_ROUTE, navOptions)
+    navigate(LoginRouter.EMAIL_SIGNUP.routePath, navOptions)
 }
 
 fun NavController.navigateKakaoSignup(
     navOptions: androidx.navigation.NavOptions? = null,
 ) {
-    navigate(KAKAO_SIGNUP_ROUTE, navOptions)
+    navigate(LoginRouter.KAKAO_SIGNUP.routePath, navOptions)
 }
