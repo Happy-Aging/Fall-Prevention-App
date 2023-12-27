@@ -18,5 +18,5 @@ jobs:
       - uses: anc95/ChatGPT-CodeReview@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 이 부분은 자동적으로 깃허브에서 생성되는 부분이기 때문에 따로 설정할 필요가 없다.
-          OPENAI_API_KEY: ${{ secrets.API_KEY }} # 여기서 secrets.등록한_키 이름을적어주면된다. 나는 API_KEY로 등록 했기 때문에 API_KEY로 작성했다.
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }} # 여기서 secrets.등록한_키 이름을적어주면된다. 나는 API_KEY로 등록 했기 때문에 API_KEY로 작성했다.
           LANGUAGE: Korean #한국어
