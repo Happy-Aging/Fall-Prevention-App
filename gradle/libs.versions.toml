@@ -20,6 +20,8 @@ viewmodel-compose = "2.6.0"
 hilt-compose-navigation = "1.0.0"
 coil-compose = "2.4.0"
 
+compose-compiler = "1.4.3"
+
 # -------- network -------- #
 retrofit = "2.9.0"
 logging-interceptor = "4.9.1"
