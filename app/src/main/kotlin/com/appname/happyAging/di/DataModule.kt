@@ -1,5 +1,7 @@
 package com.appname.happyAging.di
 
+import com.appname.happyAging.core.utils.ConnectivityManagerNetworkMonitor
+import com.appname.happyAging.core.utils.NetworkMonitor
 import com.appname.happyAging.data.repository.senior.SeniorRepositoryImpl
 import com.appname.happyAging.data.repository.survey.SurveyRepositoryImpl
 import com.appname.happyAging.data.repository.user.UserRepositoryImpl
@@ -14,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+abstract class DataModule {
     @Singleton
     @Binds
     abstract fun provideSeniorRepository(
@@ -32,5 +34,10 @@ abstract class RepositoryModule {
     abstract fun provideSurveyRepository(
         surveyRepositoryImpl: SurveyRepositoryImpl
     ): SurveyRepository
+    @Singleton
+    @Binds
+    abstract fun bindsNetworkMonitor(
+        networkMonitor: ConnectivityManagerNetworkMonitor,
+    ): NetworkMonitor
 
 }
