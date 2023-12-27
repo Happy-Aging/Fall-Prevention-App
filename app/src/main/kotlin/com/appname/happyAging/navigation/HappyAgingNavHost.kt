@@ -3,11 +3,8 @@ package com.appname.happyAging.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import com.appname.happyAging.presentation.common.navigation.loginGraph
 import com.appname.happyAging.presentation.common.navigation.mainGraph
-import com.appname.happyAging.presentation.common.view.MainScreen
-import com.appname.happyAging.presentation.user.view.LoginScreen
 import com.appname.happyAging.ui.HappyAgingAppState
 
 @Composable

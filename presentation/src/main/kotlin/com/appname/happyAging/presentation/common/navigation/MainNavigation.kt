@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.appname.happyAging.presentation.common.view.MainScreen
+import com.appname.happyAging.presentation.common.navigation.MainScreen
 
 
 private const val MAIN_GRAPH_ROUTE_PATTERN = "/"
