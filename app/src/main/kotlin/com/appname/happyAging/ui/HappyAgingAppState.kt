@@ -15,6 +15,8 @@ import androidx.navigation.navOptions
 import com.appname.happyAging.core.utils.NetworkMonitor
 import com.appname.happyAging.navigation.TopLevelDestination
 import com.appname.happyAging.navigation.TopLevelDestination.*
+import com.appname.happyAging.presentation.common.navigation.navigateLogin
+import com.appname.happyAging.presentation.common.navigation.navigateMain
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -102,14 +104,3 @@ class HappyAgingAppState(
 
 }
 
-fun NavController.navigateLogin(
-    navOptions: androidx.navigation.NavOptions? = null,
-) {
-    navigate(LOGIN.routeName, navOptions)
-}
-
-fun NavController.navigateMain(
-    navOptions: androidx.navigation.NavOptions? = null,
-) {
-    navigate(MAIN.routeName, navOptions)
-}
