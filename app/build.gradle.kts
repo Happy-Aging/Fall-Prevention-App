@@ -56,7 +56,7 @@ dependencies {
     kapt(libs.dagger.hilt.compiler)
 
     implementation(libs.bundles.network)
-
+    implementation(libs.splashscreen)
 
     implementation(project(":presentation"))
     implementation(project(":domain"))
