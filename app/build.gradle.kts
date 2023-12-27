@@ -13,6 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.appname.happyAging"
+        targetSdk = 34
         minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -24,11 +25,17 @@ android {
 
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
+    }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 
     packaging {
@@ -38,12 +45,22 @@ android {
     }
 }
 dependencies {
-
-
+    implementation(libs.bundles.compose)
+    implementation(libs.bundles.android.compose)
+    implementation(libs.bundles.android.ktx)
+    implementation(platform(libs.compose.bom))
+    debugImplementation(libs.bundles.android.compose.debug)
 
     //hlit
     implementation(libs.hilt.android)
     kapt(libs.dagger.hilt.compiler)
+
+    implementation(libs.bundles.network)
+
+
+    implementation(project(":presentation"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
 }
 
 

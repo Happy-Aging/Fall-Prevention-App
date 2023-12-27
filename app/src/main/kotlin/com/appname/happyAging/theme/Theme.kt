@@ -1,4 +1,4 @@
-package com.appname.happyAging.presentation.ui.theme
+package com.appname.happyAging.theme
 
 import android.app.Activity
 import android.os.Build
