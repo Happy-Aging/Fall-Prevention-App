@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "673730131455",
+    "project_id": "happy-aging-5bf5c",
+    "storage_bucket": "happy-aging-5bf5c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673730131455:android:386a1dd1f2838cafc5a3ca",
+        "android_client_info": {
+          "package_name": "com.appname.happyAging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL0BSJy5BBXzlI21G5qT-AFoD0sOWg1Tk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

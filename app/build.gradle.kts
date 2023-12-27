@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -57,6 +58,9 @@ dependencies {
 
     implementation(libs.bundles.network)
     implementation(libs.splashscreen)
+
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
     implementation(project(":presentation"))
     implementation(project(":domain"))
