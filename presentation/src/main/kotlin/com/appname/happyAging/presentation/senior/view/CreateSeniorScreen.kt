@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +41,11 @@ fun CreateSeniorScreen(
 ) {
     DefaultLayout(
         title = Router.SENIOR_CREATE.korean,
+        actions = {
+            IconButton(onClick = { navController.popBackStack()}) {
+                Icon(Icons.Default.Close, contentDescription = "취소")
+            }
+        }
     ) {
         var seniorName by rememberSaveable { mutableStateOf("") }
         var relation by rememberSaveable { mutableStateOf(RelationWithSenior.SELF) }
