@@ -3,6 +3,7 @@ package com.appname.happyAging.presentation.common.layout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,13 +29,18 @@ import com.appname.happyAging.presentation.user.view.LoginScreen
 /**
  * DefaultLayout is a composable function that takes a title and a content lambda as parameters.
  * @param title the title of the screen. If title is not null, it will be displayed in the topAppBar.
+ * @param actions title이 null이 아닌 경우에 넣어야한다.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DefaultLayout(
     title: String? = null,
+    actions: @Composable RowScope.() -> Unit = {},
     body: @Composable () -> Unit,
 ) {
+    assert(actions == {} || title != null) {
+        "title이 null이 아닌 경우에만 actions을 넣어주세요."
+    }
     Scaffold(
         topBar = {
             title?.let {
@@ -55,7 +61,8 @@ fun DefaultLayout(
                             start = Offset(0f, size.height),
                             end = Offset(size.width, size.height)
                         )
-                    }
+                    },
+                    actions = actions
                 )
             }
         },
@@ -74,7 +81,12 @@ fun DefaultLayout(
 @Preview
 @Composable
 fun DefaultLayoutPreview() {
-    DefaultLayout(title = "Title") {
+    DefaultLayout(
+        title = "Title",
+        actions ={
+            Text(text = "Actions")
+        }
+    ) {
         Text(text = "Content")
     }
 }
