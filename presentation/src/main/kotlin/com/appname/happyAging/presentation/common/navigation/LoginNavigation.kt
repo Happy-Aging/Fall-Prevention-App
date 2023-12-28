@@ -48,14 +48,17 @@ fun NavController.navigateLogin(
     navigate(LoginRouter.LOGIN.routePath, navOptions)
 }
 
-fun NavController.navigateEmailSignup(
-    navOptions: androidx.navigation.NavOptions? = null,
-) {
-    navigate(LoginRouter.EMAIL_SIGNUP.routePath, navOptions)
-}
 
-fun NavController.navigateKakaoSignup(
-    navOptions: androidx.navigation.NavOptions? = null,
+fun NavController.go(
+    loginRouter: LoginRouter,
 ) {
-    navigate(LoginRouter.KAKAO_SIGNUP.routePath, navOptions)
+    when (loginRouter) {
+        LoginRouter.LOGIN -> navigateLogin()
+        LoginRouter.EMAIL_SIGNUP -> {
+            navigate(LoginRouter.KAKAO_SIGNUP.routePath)
+        }
+        LoginRouter.KAKAO_SIGNUP -> {
+            navigate(LoginRouter.EMAIL_SIGNUP.routePath)
+        }
+    }
 }

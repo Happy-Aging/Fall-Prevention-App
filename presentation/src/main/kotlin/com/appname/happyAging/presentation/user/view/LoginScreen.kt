@@ -2,6 +2,7 @@ package com.appname.happyAging.presentation.user.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,15 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +41,7 @@ import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
+import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.user.component.KakaoButton
 
@@ -122,7 +121,10 @@ fun LoginScreen(navController: NavController) {
                 style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                     color = Colors.GREY_TEXT
                 ),
-                modifier = Modifier.align(Alignment.Start),
+                modifier = Modifier.align(Alignment.Start)
+                    .clickable {
+                         navController.go(LoginRouter.EMAIL_SIGNUP)
+                    },
             )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL2))
             Text(
@@ -158,8 +160,7 @@ fun LoginScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             KakaoButton(text = "카카오 로그인") {
-                navController.navigateMain()
-                //navController.navigateKakaoSignup()
+                navController.go(LoginRouter.KAKAO_SIGNUP)
             }
         }
     }
