@@ -52,13 +52,13 @@ fun SignupScreenFactory.kakaoSignup(navController: NavController) {
     SignupScreen(navController =navController)
 }
 
-enum class Sex(val english:String){
-    MALE("male"),
-    FEMALE("female"),
+enum class Sex(val english:String, val korean: String){
+    MALE("male", "남자"),
+    FEMALE("female", "여자"),
 }
-enum class SignupType(val english: String){
-    INDIVIDUAL("individual"),
-    CARE_MANAGER("careManager"),
+enum class SignupType(val english: String, val korean: String){
+    INDIVIDUAL("individual", "일반"),
+    CARE_MANAGER("careManager", "돌봄매니저"),
 }
 
 @Composable
@@ -159,12 +159,11 @@ fun SignupScreen(
                     .align(Alignment.Start)
                     .padding(bottom = Sizes.INTERVAL1),
             )
-            RadioButtonRow(text = "남자", value = sex == Sex.MALE, id = 0, onClick = {
-                sex = Sex.MALE
-            })
-            RadioButtonRow(text = "여자", value = sex == Sex.FEMALE, id = 0, onClick = {
-                sex = Sex.FEMALE
-            })
+            Sex.values().forEach {sexType ->
+                RadioButtonRow(text = sexType.name, value = sex == sexType, id = 0, onClick = {
+                    sex = sexType
+                })
+            }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             Text(
                 text = "가입자 유형",
@@ -173,12 +172,11 @@ fun SignupScreen(
                     .align(Alignment.Start)
                     .padding(bottom = Sizes.INTERVAL1),
             )
-            RadioButtonRow(text = "일반", value = signupType == SignupType.INDIVIDUAL, id = 0, onClick = {
-                signupType = SignupType.INDIVIDUAL
-            })
-            RadioButtonRow(text = "돌봄매니저", value = signupType == SignupType.CARE_MANAGER, id = 0, onClick = {
-                signupType = SignupType.CARE_MANAGER
-            })
+            SignupType.values().forEach {signUpValue ->
+                RadioButtonRow(text = signUpValue.korean, value = signupType == signUpValue, id = 0, onClick = {
+                    signupType = signUpValue
+                })
+            }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             CommonButton(text = "계정 만들기") {
                 navController.navigateMain()
