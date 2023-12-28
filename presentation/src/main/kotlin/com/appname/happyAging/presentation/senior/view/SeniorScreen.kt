@@ -55,12 +55,13 @@ fun SeniorScreen(
                 modifier = Modifier
                     .padding(
                         horizontal = Sizes.DEFAULT_PADDING,
-                    ).drawBehind {
+                    )
+                    .drawBehind {
                         drawRoundRect(
                             color = Colors.BLACK,
                             cornerRadius = CornerRadius(5f,5f),
                             style = Stroke(
-                                width = 1f,
+                                width = 3f,
                                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                             )
                         )
@@ -68,6 +69,7 @@ fun SeniorScreen(
             ) {
                 navController.navigate(Router.SENIOR_CREATE.routePath)
             }
+            Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
         }
 
     }
