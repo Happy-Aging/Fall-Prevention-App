@@ -3,7 +3,9 @@ package com.appname.happyAging.presentation.common.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,8 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +25,6 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextEditField(
     keyboardOptions: KeyboardOptions = KeyboardOptions(
@@ -32,11 +32,12 @@ fun CustomTextEditField(
         imeAction = ImeAction.Next
     ),
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    value: String, onValueChange: (String) -> Unit
+    value: String,
+    onValueChange: (String) -> Unit
 ) {
     Row(
         modifier = Modifier
-            .height(43.dp)
+            .height(Sizes.BUTTON_HEIGHT)
             .fillMaxWidth()
             .border(
                 width = 1.dp,
@@ -57,6 +58,34 @@ fun CustomTextEditField(
             value = value,
             onValueChange = onValueChange,
             keyboardActions = keyboardActions
+        )
+    }
+}
+
+@Composable
+fun CustomTextFieldWithTitle(
+    text: String,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Text,
+        imeAction = ImeAction.Next
+    ),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    Column() {
+        Text(
+            text = text,
+            style = TextStyles.TITLE_MEDIUM2,
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(bottom = Sizes.INTERVAL1),
+        )
+        CustomTextEditField(
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            value = value,
+            onValueChange = onValueChange
         )
     }
 }
