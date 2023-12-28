@@ -9,7 +9,7 @@ import com.appname.happyAging.presentation.user.view.SignupScreenFactory
 import com.appname.happyAging.presentation.user.view.emailSignup
 import com.appname.happyAging.presentation.user.view.kakaoSignup
 
-private const val LOGIN_GRAPH_ROUTE_PATTERN = "/login"
+const val LOGIN_GRAPH_ROUTE_PATTERN = "/login"
 
 enum class LoginRouter(
     val routePath: String,
