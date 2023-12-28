@@ -27,6 +27,18 @@ object TextStyles {
         fontWeight = BOLD,
         color = Colors.BLACK
     )
+    val TITLE_MEDIUM1 = TextStyle(
+        fontSize = 18.sp,
+        fontFamily = NOTO_SANS,
+        fontWeight = BOLD,
+        color = Colors.BLACK
+    )
+    val TITLE_MEDIUM2 = TextStyle(
+        fontSize = 16.sp,
+        fontFamily = NOTO_SANS,
+        fontWeight = BOLD,
+        color = Colors.BLACK
+    )
 
     val CONTENT_TEXT1_STYLE = TextStyle(
         fontSize = 18.sp,

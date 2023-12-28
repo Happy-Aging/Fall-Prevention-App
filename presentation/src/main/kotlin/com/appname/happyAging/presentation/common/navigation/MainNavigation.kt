@@ -2,12 +2,13 @@ package com.appname.happyAging.presentation.common.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.appname.happyAging.presentation.common.navigation.MainScreen
 
 
-private const val MAIN_GRAPH_ROUTE_PATTERN = "/"
+const val MAIN_GRAPH_ROUTE_PATTERN = "/"
 const val MAIN_ROUTE = "main"
 fun NavGraphBuilder.mainGraph(
     navController: NavController,
@@ -22,8 +23,11 @@ fun NavGraphBuilder.mainGraph(
 
     }
 }
+
 fun NavController.navigateMain(
-    navOptions: androidx.navigation.NavOptions? = null,
+    navOptions: NavOptions = NavOptions.Builder()
+        .setPopUpTo(LOGIN_GRAPH_ROUTE_PATTERN, false)
+        .build(),
 ) {
     navigate(MAIN_GRAPH_ROUTE_PATTERN, navOptions)
 }
