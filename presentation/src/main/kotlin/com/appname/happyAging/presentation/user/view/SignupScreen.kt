@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -73,7 +72,7 @@ fun SignupScreen(
     var address by rememberSaveable { mutableStateOf("") }
     var detailAddress by rememberSaveable { mutableStateOf("") }
     var birthYear by rememberSaveable { mutableStateOf("") }
-    var sex by rememberSaveable { mutableStateOf(Sex.MALE) }
+    var sexType by rememberSaveable { mutableStateOf(Sex.MALE) }
     var signupType by rememberSaveable { mutableStateOf(SignupType.INDIVIDUAL) }
 
     DefaultLayout(
@@ -159,9 +158,9 @@ fun SignupScreen(
                     .align(Alignment.Start)
                     .padding(bottom = Sizes.INTERVAL1),
             )
-            Sex.values().forEach {sexType ->
-                RadioButtonRow(text = sexType.name, value = sex == sexType, id = 0, onClick = {
-                    sex = sexType
+            Sex.values().forEach {sex ->
+                RadioButtonRow(text = sexType.korean, value = sexType == sex, id = 0, onClick = {
+                    sexType = sex
                 })
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
@@ -172,9 +171,9 @@ fun SignupScreen(
                     .align(Alignment.Start)
                     .padding(bottom = Sizes.INTERVAL1),
             )
-            SignupType.values().forEach {signUpValue ->
-                RadioButtonRow(text = signUpValue.korean, value = signupType == signUpValue, id = 0, onClick = {
-                    signupType = signUpValue
+            SignupType.values().forEach {type ->
+                RadioButtonRow(text = type.korean, value = signupType == type, id = 0, onClick = {
+                    signupType = type
                 })
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
