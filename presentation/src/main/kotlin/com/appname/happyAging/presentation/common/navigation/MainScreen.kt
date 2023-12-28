@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
+import com.appname.happyAging.presentation.senior.view.CreateSeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
 
 enum class BottomNavRouter(
@@ -41,6 +41,13 @@ enum class BottomNavRouter(
     FALL_PREVENTION("fall-prevention", "낙상 예방 콘텐츠", Icons.Default.Home),
     SENIOR_LIST("senior-list", "시니어 목록", Icons.Default.Home),
     PROFILE("profile", "내정보", Icons.Default.Home),
+}
+
+enum class Router(
+    val routePath: String,
+    val korean : String,
+) {
+    SENIOR_CREATE("senior-create", "시니어 생성"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,27 +75,28 @@ fun MainScreen(navController: NavController) {
             ){
                 val navBackStackEntry by mainNavHostController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
-
-                items.forEach { item ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(
-                                vertical = Sizes.INTERVAL1,
-                            )
-                            .clickable {
-                                mainNavHostController.navigate(item.routePath) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+                if( currentRoute in items.map { it.routePath } ) {
+                    items.forEach { item ->
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(
+                                    vertical = Sizes.INTERVAL1,
+                                )
+                                .clickable {
+                                    mainNavHostController.navigate(item.routePath) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
                                 }
-                            }
-                    ){
-                        Icon(imageVector = item.icon, contentDescription = null)
-                        Text(text = item.korean, style = TextStyles.CONTENT_SMALL2_STYLE)
+                        ) {
+                            Icon(imageVector = item.icon, contentDescription = null)
+                            Text(text = item.korean, style = TextStyles.CONTENT_SMALL2_STYLE)
+                        }
                     }
                 }
             }
@@ -107,6 +115,9 @@ fun MainScreen(navController: NavController) {
             }
             composable(route = BottomNavRouter.PROFILE.routePath) {
                 Text("내정보")
+            }
+            composable(route = Router.SENIOR_CREATE.routePath) {
+                CreateSeniorScreen(navController = mainNavHostController)
             }
         }
     }

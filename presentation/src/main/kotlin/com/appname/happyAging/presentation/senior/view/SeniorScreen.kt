@@ -1,7 +1,5 @@
 package com.appname.happyAging.presentation.senior.view
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,19 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
-import com.appname.happyAging.presentation.senior.component.SeniorItem
+import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.senior.component.SeniorItemFactory
 import com.appname.happyAging.presentation.senior.component.fromModel
 import com.appname.happyAging.presentation.senior.component.people
@@ -70,7 +66,7 @@ fun SeniorScreen(
                         )
                     }
             ) {
-                //TODO
+                navController.navigate(Router.SENIOR_CREATE.routePath)
             }
         }
 
