@@ -12,7 +12,7 @@ on: # 언제 실행할지
 jobs:
   test:
     # 만약 PR에 gpt review 라는 라벨이 붙어있을때만 실행하고 싶다면 아래와 같이 작성하면 된다.
-    #if: ${{ contains(github.event.*.labels.*.name, 'gpt review') }} # Optional; to run only when a label is attached
+    if: ${{ contains(github.event.*.labels.*.name, 'gpt review') }} # Optional; to run only when a label is attached
     runs-on: ubuntu-latest
     steps:
       - uses: anc95/ChatGPT-CodeReview@main
