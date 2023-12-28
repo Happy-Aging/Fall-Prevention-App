@@ -11,4 +11,5 @@ object Colors {
 
     val GREY_TEXT = Color(0xFFA7A7A7)
     val TEXT_FIELD_GREY = Color(0xFFD9D9D9)
+    val PRIMARY_ORANGE = Color(0xFFE58310)
 }
