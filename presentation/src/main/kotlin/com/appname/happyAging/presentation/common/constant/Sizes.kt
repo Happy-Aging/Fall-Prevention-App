@@ -13,5 +13,6 @@ object Sizes {
     val INTERVAL3 = 4.dp
     val INTERVAL4 = 2.dp
 
-    val BUTTON_HEIGHT = 54.dp
+    val BUTTON_HEIGHT = 43.dp
+    val BUTTON_ROUND = 5.dp
 }

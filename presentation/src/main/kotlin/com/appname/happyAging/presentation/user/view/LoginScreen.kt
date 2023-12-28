@@ -1,6 +1,7 @@
 package com.appname.happyAging.presentation.user.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Divider
@@ -34,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.appname.happyAging.presentation.R
+import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextEditField
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
@@ -69,6 +72,7 @@ fun LoginScreen(navController: NavController) {
                 style = TextStyles.TITLE_MEDIUM2,
                 modifier = Modifier.align(Alignment.Start),
             )
+            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
             CustomTextEditField(
                 value = id,
                 onValueChange = { id = it },
@@ -77,11 +81,13 @@ fun LoginScreen(navController: NavController) {
                     imeAction =  ImeAction.Next
                 )
             )
+            Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Text(
                 text = "비밀번호",
                 style = TextStyles.TITLE_MEDIUM2,
                 modifier = Modifier.align(Alignment.Start),
             )
+            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
             CustomTextEditField(
                 value = password,
                 onValueChange = { password = it },
@@ -95,11 +101,22 @@ fun LoginScreen(navController: NavController) {
                     }
                 )
             )
-            TextButton(onClick = {
-                navController.navigateMain()
-            }) {
-                Text(text = "로그인")
+            Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
+            CommonButton(
+                text = "로그인",
+                color = Colors.WHITE,
+                textColor = Colors.BLACK,
+                modifier = Modifier.border(
+                    width = 1.dp,
+                    color = Colors.DIVIDER_GREY,
+                    shape = RoundedCornerShape(
+                        size = Sizes.BUTTON_ROUND
+                    )
+                )
+            ) {
+                login(navController, id, password)
             }
+            Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Text(
                 text = "회원가입",
                 style = TextStyles.CONTENT_SMALL0_STYLE.copy(
@@ -124,7 +141,8 @@ fun LoginScreen(navController: NavController) {
                     thickness = 1.dp,
                 )
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
                         .padding(horizontal = Sizes.INTERVAL1),
                     text = "또는",
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
