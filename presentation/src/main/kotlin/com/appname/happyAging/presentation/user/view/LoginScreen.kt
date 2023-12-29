@@ -119,7 +119,7 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "회원가입",
                 style = TextStyles.CONTENT_SMALL0_STYLE.copy(
-                    color = Colors.GREY_TEXT
+                    color = Colors.PRIMARY_ORANGE
                 ),
                 modifier = Modifier.align(Alignment.Start)
                     .clickable {
@@ -130,7 +130,7 @@ fun LoginScreen(navController: NavController) {
             Text(
                 text = "ID/비밀번호 찾기",
                 style = TextStyles.CONTENT_SMALL0_STYLE.copy(
-                    color = Colors.GREY_TEXT
+                    color = Colors.PRIMARY_ORANGE
                 ),
                 modifier = Modifier.align(Alignment.Start),
             )
