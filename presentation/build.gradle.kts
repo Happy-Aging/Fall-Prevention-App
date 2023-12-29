@@ -57,6 +57,7 @@ dependencies {
 
 
     implementation("com.kakao.sdk:v2-user:2.19.0")
+    implementation(libs.compose.webview)
     //hlit
     implementation(libs.hilt.android)
     kapt(libs.dagger.hilt.compiler)
