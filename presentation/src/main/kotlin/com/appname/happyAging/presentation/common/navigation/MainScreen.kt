@@ -1,23 +1,37 @@
 package com.appname.happyAging.presentation.common.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,12 +44,13 @@ import androidx.navigation.compose.rememberNavController
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
+import com.appname.happyAging.presentation.common.utils.noRippleClickable
 import com.appname.happyAging.presentation.senior.view.CreateSeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
 
 enum class BottomNavRouter(
     val routePath: String,
-    val korean : String,
+    val korean: String,
     val icon: ImageVector
 ) {
     FALL_PREVENTION("fall-prevention", "낙상 예방 콘텐츠", Icons.Default.Home),
@@ -45,7 +60,7 @@ enum class BottomNavRouter(
 
 enum class Router(
     val routePath: String,
-    val korean : String,
+    val korean: String,
 ) {
     SENIOR_CREATE("senior-create", "시니어 생성"),
 }
@@ -59,32 +74,25 @@ fun MainScreen(navController: NavController) {
 
     Scaffold(
         bottomBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(
-                            color = Colors.DIVIDER_GREY,
-                            strokeWidth = 1.dp.toPx(),
-                            start = Offset(0f, 0f),
-                            end = Offset(size.width, 0f)
-                        )
-                    },
-                horizontalArrangement = Arrangement.SpaceBetween
-            ){
-                val navBackStackEntry by mainNavHostController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
-                if( currentRoute in items.map { it.routePath } ) {
+            val navBackStackEntry by mainNavHostController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            if (currentRoute in items.map { it.routePath }) {
+                NavigationBar(
+                    modifier = Modifier.shadow(
+                        elevation = 15.dp,
+                        spotColor = Color(0xff000000),
+                        ambientColor = Color(0xff000000),
+                    ),
+                    containerColor = Colors.WHITE,
+                ) {
                     items.forEach { item ->
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(
-                                    vertical = Sizes.INTERVAL1,
-                                )
-                                .clickable {
+                                .fillMaxHeight()
+                                .noRippleClickable {
                                     mainNavHostController.navigate(item.routePath) {
                                         popUpTo(navController.graph.startDestinationId) {
                                             saveState = true
@@ -99,6 +107,7 @@ fun MainScreen(navController: NavController) {
                         }
                     }
                 }
+
             }
         }
     ) { innerPadding ->
