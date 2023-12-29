@@ -1,8 +1,10 @@
 package com.appname.happyAging.presentation.user.view
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +38,8 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.LoginRouter
+import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
 import java.time.LocalDate
 
@@ -75,114 +79,132 @@ fun SignupScreen(
     var sexType by rememberSaveable { mutableStateOf(Sex.MALE) }
     var signupType by rememberSaveable { mutableStateOf(SignupType.INDIVIDUAL) }
 
-    DefaultLayout(
-        title = "회원가입",
-    ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(
-                    horizontal = Sizes.DEFAULT_PADDING,
-                )
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start,
+    var openAlertDialog by rememberSaveable { mutableStateOf(false) }
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        DefaultLayout(
+            title = "회원가입",
         ) {
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
-            CustomTextFieldWithTitle(text = "이름", value = userName, onValueChange = {userName = it})
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextFieldWithTitle(text = "아이디", value = id, onValueChange = {id = it})
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextFieldWithTitle(
-                text = "비밀번호",
-                value = password,
-                onValueChange = {password = it},
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction =  ImeAction.Next
-                )
-            )
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextFieldWithTitle(
-                text = "비밀번호 재확인",
-                value = passwordCheck,
-                onValueChange = {passwordCheck = it},
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction =  ImeAction.Next
-                ),
-            )
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
 
-            Text(
-                text = "주소",
-                style = TextStyles.TITLE_MEDIUM2,
+            Column(
                 modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(bottom = Sizes.INTERVAL1),
-            )
-            CommonButton(
-                text = "",
-                color = Color.Transparent,
-                modifier = Modifier.border(
-                    width = 1.dp,
-                    color = Colors.DIVIDER_GREY,
-                    shape = RoundedCornerShape(size = Sizes.BUTTON_ROUND)
-                )
+                    .fillMaxSize()
+                    .padding(
+                        horizontal = Sizes.DEFAULT_PADDING,
+                    )
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.Start,
             ) {
-                //주소
-            }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
+                CustomTextFieldWithTitle(text = "이름", value = userName, onValueChange = {userName = it})
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CustomTextFieldWithTitle(text = "아이디", value = id, onValueChange = {id = it})
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CustomTextFieldWithTitle(
+                    text = "비밀번호",
+                    value = password,
+                    onValueChange = {password = it},
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction =  ImeAction.Next
+                    )
+                )
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CustomTextFieldWithTitle(
+                    text = "비밀번호 재확인",
+                    value = passwordCheck,
+                    onValueChange = {passwordCheck = it},
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction =  ImeAction.Next
+                    ),
+                )
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
 
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextFieldWithTitle(text = "상세주소", value = detailAddress, onValueChange = {
-                detailAddress = it
-            })
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                Text(
+                    text = "주소",
+                    style = TextStyles.TITLE_MEDIUM2,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = Sizes.INTERVAL1),
+                )
+                CommonButton(
+                    text = address,
+                    color = Color.Transparent,
+                    textColor = Colors.BLACK,
+                    modifier = Modifier.border(
+                        width = 1.dp,
+                        color = Colors.DIVIDER_GREY,
+                        shape = RoundedCornerShape(size = Sizes.BUTTON_ROUND)
+                    )
+                ) {
+                    openAlertDialog = true
+                }
 
-
-            Text(
-                text = "출생년도",
-                style = TextStyles.TITLE_MEDIUM2,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(bottom = Sizes.INTERVAL1),
-            )
-
-            ScrollableYears()
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            Text(
-                text = "성별",
-                style = TextStyles.TITLE_MEDIUM2,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(bottom = Sizes.INTERVAL1),
-            )
-            Sex.values().forEach {sex ->
-                RadioButtonRow(text = sexType.korean, value = sexType == sex, id = 0, onClick = {
-                    sexType = sex
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CustomTextFieldWithTitle(text = "상세주소", value = detailAddress, onValueChange = {
+                    detailAddress = it
                 })
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+
+
+                Text(
+                    text = "출생년도",
+                    style = TextStyles.TITLE_MEDIUM2,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = Sizes.INTERVAL1),
+                )
+
+                ScrollableYears()
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                Text(
+                    text = "성별",
+                    style = TextStyles.TITLE_MEDIUM2,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = Sizes.INTERVAL1),
+                )
+                Sex.values().forEach {sex ->
+                    RadioButtonRow(text = sexType.korean, value = sexType == sex, id = 0, onClick = {
+                        sexType = sex
+                    })
+                }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                Text(
+                    text = "가입자 유형",
+                    style = TextStyles.TITLE_MEDIUM2,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = Sizes.INTERVAL1),
+                )
+                SignupType.values().forEach {type ->
+                    RadioButtonRow(text = type.korean, value = signupType == type, id = 0, onClick = {
+                        signupType = type
+                    })
+                }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CommonButton(text = "계정 만들기") {
+                    navController.navigateMain()
+                }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             }
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            Text(
-                text = "가입자 유형",
-                style = TextStyles.TITLE_MEDIUM2,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(bottom = Sizes.INTERVAL1),
+        }
+        if(openAlertDialog){
+            AddressWebView(
+                onSelected = {
+                    Log.d("onSelected", "onSelected $it from SignupScreen")
+                    address = it
+                    openAlertDialog = false
+                }
             )
-            SignupType.values().forEach {type ->
-                RadioButtonRow(text = type.korean, value = signupType == type, id = 0, onClick = {
-                    signupType = type
-                })
-            }
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CommonButton(text = "계정 만들기") {
-                navController.navigateMain()
-            }
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
         }
     }
+
+
 }
 @Composable
 fun ScrollableYears() {
