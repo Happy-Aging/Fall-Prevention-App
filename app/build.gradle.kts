@@ -1,4 +1,6 @@
 import io.netty.util.ReferenceCountUtil.release
+import org.jetbrains.kotlin.konan.properties.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.android.application)
@@ -6,6 +8,11 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     id("com.google.gms.google-services")
+}
+
+val properties = Properties()
+project.rootProject.file("local.properties").inputStream().use {
+    properties.load(it)
 }
 
 android {
@@ -21,6 +28,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties["kakao_native_app_key"]}\"")
+        resValue("string", "KAKAO_OAUTH_HOST", "\"${properties["kakao_oauth_host"]}\"")
     }
 
 
@@ -34,6 +43,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
@@ -58,6 +68,9 @@ dependencies {
 
     implementation(libs.bundles.network)
     implementation(libs.splashscreen)
+
+    implementation("com.kakao.sdk:v2-user:2.19.0")
+    //implementation(libs.kakao.login)
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-analytics")
