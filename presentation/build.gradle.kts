@@ -2,6 +2,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -52,4 +54,14 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
 
     debugImplementation(libs.bundles.android.compose.debug)
+
+
+    implementation("com.kakao.sdk:v2-user:2.19.0")
+    //hlit
+    implementation(libs.hilt.android)
+    kapt(libs.dagger.hilt.compiler)
+}
+
+kapt {
+    correctErrorTypes = true
 }

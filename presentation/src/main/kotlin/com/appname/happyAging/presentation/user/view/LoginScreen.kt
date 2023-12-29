@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.appname.happyAging.presentation.R
 import com.appname.happyAging.presentation.common.component.CommonButton
@@ -44,10 +45,15 @@ import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.user.component.KakaoButton
+import com.appname.happyAging.presentation.user.viewmodel.UserViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: NavController,
+    viewModel: UserViewModel = hiltViewModel(),
+) {
+    val context = LocalContext.current
     DefaultLayout(
         title = LoginRouter.LOGIN.korean,
     ) {
@@ -121,9 +127,10 @@ fun LoginScreen(navController: NavController) {
                 style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                     color = Colors.PRIMARY_ORANGE
                 ),
-                modifier = Modifier.align(Alignment.Start)
+                modifier = Modifier
+                    .align(Alignment.Start)
                     .clickable {
-                         navController.go(LoginRouter.EMAIL_SIGNUP)
+                        navController.go(LoginRouter.EMAIL_SIGNUP)
                     },
             )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL2))
@@ -160,7 +167,7 @@ fun LoginScreen(navController: NavController) {
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             KakaoButton(text = "카카오 로그인") {
-                navController.go(LoginRouter.KAKAO_SIGNUP)
+                viewModel.kakaoLogin(context)
             }
         }
     }

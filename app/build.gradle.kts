@@ -23,6 +23,8 @@ android {
         applicationId = "com.appname.happyAging"
         targetSdk = 34
         minSdk = 26
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
