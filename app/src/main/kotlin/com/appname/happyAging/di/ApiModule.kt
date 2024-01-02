@@ -5,6 +5,7 @@ import com.appname.happyAging.data.api.ApiConstants.BASE_URL
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.data.api.AuthInterceptor
 import com.appname.happyAging.data.api.HeaderInterceptor
+import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,14 +26,14 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideHeaderInterceptor(autoLoginPreferences: SharedPreferences): HeaderInterceptor {
-        return HeaderInterceptor(autoLoginPreferences)
+    fun provideHeaderInterceptor(jwtTokenRepository: JwtTokenRepository): HeaderInterceptor {
+        return HeaderInterceptor(jwtTokenRepository)
     }
 
     @Singleton
     @Provides
-    fun provideAuthInterceptor(autoLoginPreferences: SharedPreferences): Authenticator {
-        return AuthInterceptor(autoLoginPreferences)
+    fun provideAuthInterceptor(jwtTokenRepository: JwtTokenRepository): Authenticator {
+        return AuthInterceptor(jwtTokenRepository)
     }
 
 

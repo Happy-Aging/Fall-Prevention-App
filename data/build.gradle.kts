@@ -19,7 +19,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
@@ -38,4 +38,6 @@ dependencies {
 
     implementation(libs.logging.interceptor)
     implementation(libs.converter.gson)
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 }

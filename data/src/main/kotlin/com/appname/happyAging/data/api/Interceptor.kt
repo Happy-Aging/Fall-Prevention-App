@@ -2,6 +2,7 @@ package com.appname.happyAging.data.api
 
 import android.content.SharedPreferences
 import com.appname.happyAging.data.api.ApiConstants.BASE_URL
+import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 
 class AuthInterceptor @Inject constructor(
-    private val prefs: SharedPreferences
+    private val jwtTokenRepository: JwtTokenRepository,
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         val originRequest = response.request
@@ -23,7 +24,7 @@ class AuthInterceptor @Inject constructor(
             return null
         }
         val refreshToken = runBlocking {
-            prefs.getString("refreshToken", "")
+            jwtTokenRepository.getJwtToken().refreshToken
         }
         val refreshRequest = Request.Builder()
             .url("$BASE_URL/reissue")
@@ -35,15 +36,18 @@ class AuthInterceptor @Inject constructor(
             val gson = Gson()
             val refreshResponseJson = gson.fromJson(refreshResponse.body?.string(), Map::class.java)
             val newAccessToken = refreshResponseJson["accessToken"].toString()
-            prefs.edit().putString("accessToken", newAccessToken).apply()
+            runBlocking {
+                jwtTokenRepository.saveAccessToken(newAccessToken)
+            }
             val newRequest = originRequest.newBuilder()
                 .removeHeader("Authorization")
                 .addHeader("Authorization", "Bearer $newAccessToken")
                 .build()
             return newRequest
         }else{
-            prefs.edit().remove("accessToken").apply()
-            prefs.edit().remove("refreshToken").apply()
+            runBlocking {
+                jwtTokenRepository.deleteJwtToken()
+            }
         }
         return null
 
@@ -52,7 +56,7 @@ class AuthInterceptor @Inject constructor(
 }
 
 class HeaderInterceptor @Inject constructor(
-    private val prefs: SharedPreferences
+    private val jwtTokenRepository: JwtTokenRepository,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         if(chain.request().headers["Auth"] == "false"){
@@ -64,7 +68,8 @@ class HeaderInterceptor @Inject constructor(
 
         var token = ""
         runBlocking {
-            token = ("Bearer " + prefs.getString("accessToken", ""))
+            val accessToken = jwtTokenRepository.getJwtToken().accessToken
+            token = ("Bearer $accessToken")
         }
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", token)
