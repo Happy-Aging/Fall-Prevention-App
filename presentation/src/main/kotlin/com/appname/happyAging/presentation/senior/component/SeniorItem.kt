@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
@@ -43,13 +44,13 @@ val people = listOf(
 object SeniorItemFactory
 
 @Composable
-fun SeniorItemFactory.fromModel(person: Person) {
+fun SeniorItemFactory.fromModel(person: SeniorModel) {
     SeniorItem(
-        number = people.indexOf(person) + 1,
+        number = person.id.toInt(),
         name = person.name,
         age = person.age,
         address = person.address,
-        relation = person.relation
+        relation = person.profile,
     )
 }
 

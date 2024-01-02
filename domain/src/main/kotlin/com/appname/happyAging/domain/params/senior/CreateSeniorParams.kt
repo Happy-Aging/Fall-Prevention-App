@@ -9,4 +9,16 @@ class CreateSeniorParams(
     val sex: Sex,
     val address: String,
     val residence: String,
-)
+){
+    companion object{
+        fun fixture() : CreateSeniorParams{
+            return CreateSeniorParams(
+                "김복자",
+                LocalDate.now(),
+                Sex.MALE,
+                "서울시 강남구",
+                "서울시 강남구",
+            )
+        }
+    }
+}
