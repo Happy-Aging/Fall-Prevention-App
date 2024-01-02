@@ -36,14 +36,13 @@ class JwtTokenRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getJwtToken(): JwtToken {
-        val x= dataStore.data.map {prefs ->
+        return dataStore.data.map {prefs ->
             val accessToken = prefs[ACCESS_TOKEN]!!
             val refreshToken = prefs[REFRESH_TOKEN]!!
             JwtToken(accessToken, refreshToken)
         }.catch {
             throw it
-        }
-        return x.first()
+        }.first()
     }
 
     override suspend fun deleteJwtToken() {
