@@ -97,11 +97,10 @@ fun MainScreen(navController: NavController) {
                                 .fillMaxHeight()
                                 .noRippleClickable {
                                     mainNavHostController.navigate(item.routePath) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
+                                        popUpTo(mainNavHostController.graph.startDestinationId){
+                                            inclusive = false
                                         }
                                         launchSingleTop = true
-                                        restoreState = true
                                     }
                                 }
                         ) {
