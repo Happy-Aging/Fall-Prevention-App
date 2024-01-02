@@ -45,6 +45,7 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
+import com.appname.happyAging.presentation.my.view.EditInfoScreen
 import com.appname.happyAging.presentation.my.view.MyPageScreen
 import com.appname.happyAging.presentation.senior.view.CreateSeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
@@ -64,6 +65,7 @@ enum class Router(
     val korean: String,
 ) {
     SENIOR_CREATE("senior-create", "시니어 생성"),
+    EDIT_INFO("edit-info", "정보 수정"),
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,6 +130,9 @@ fun MainScreen(navController: NavController) {
             }
             composable(route = Router.SENIOR_CREATE.routePath) {
                 CreateSeniorScreen(navController = mainNavHostController)
+            }
+            composable(route = Router.EDIT_INFO.routePath) {
+                EditInfoScreen(navController = mainNavHostController)
             }
         }
     }
