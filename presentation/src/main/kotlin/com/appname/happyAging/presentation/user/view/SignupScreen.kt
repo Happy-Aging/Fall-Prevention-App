@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.appname.happyAging.domain.model.senior.Sex
 import com.appname.happyAging.presentation.common.component.RadioButtonRow
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextEditField
@@ -56,10 +57,6 @@ fun SignupScreenFactory.kakaoSignup(navController: NavController) {
     SignupScreen(navController =navController)
 }
 
-enum class Sex(val english:String, val korean: String){
-    MALE("male", "남자"),
-    FEMALE("female", "여자"),
-}
 enum class SignupType(val english: String, val korean: String){
     INDIVIDUAL("individual", "일반"),
     CARE_MANAGER("careManager", "돌봄매니저"),
