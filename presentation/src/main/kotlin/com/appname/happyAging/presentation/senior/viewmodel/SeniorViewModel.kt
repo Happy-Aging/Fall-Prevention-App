@@ -41,7 +41,6 @@ class SeniorViewModel @Inject constructor(
     }
 
     fun createSenior(createSeniorParams: CreateSeniorParams){
-        Log.d("SeniorViewModel", "createSenior: ${_senior.value.toString()}")
         if(_senior.value !is UiState.Success) return
         viewModelScope.launch {
             createSeniorUseCase(createSeniorParams).onSuccess {
@@ -57,15 +56,10 @@ class SeniorViewModel @Inject constructor(
                 )
                 list.add(newModel)
                 _senior.value = UiState.Success(list)
-                Log.d("SeniorViewModel", "createSenior: ${newModel.toString()}, ${(_senior.value as UiState.Success<MutableList<SeniorModel>>).data.size}")
             }.onFailure {
                 _senior.value = UiState.Error(it.message ?: "Unknown error")
             }
         }
     }
 
-    override fun onCleared() {
-        Log.d("SeniorViewModel", "onCleared: $this")
-        super.onCleared()
-    }
 }

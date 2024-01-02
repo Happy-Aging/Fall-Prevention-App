@@ -19,7 +19,7 @@ class SeniorRepositoryImpl @Inject constructor() : SeniorRepository {
                 65,
                 Sex.MALE,
                 "2021-01-01",
-                "2021-01-01",
+                "가족",
                 1,
             )
         )
