@@ -72,13 +72,14 @@ fun LoginScreen(
             TopPart()
             ////////////////////////////
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
-            Text(
-                text = "아이디",
-                style = TextStyles.TITLE_MEDIUM2,
-                modifier = Modifier.align(Alignment.Start),
-            )
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
+//            Text(
+//                text = "아이디",
+//                style = TextStyles.TITLE_MEDIUM2,
+//                modifier = Modifier.align(Alignment.Start),
+//            )
+//            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
             CustomTextEditField(
+                label = "아이디를 입력하세요",
                 value = id,
                 onValueChange = { id = it },
                 keyboardOptions = KeyboardOptions(
@@ -87,13 +88,14 @@ fun LoginScreen(
                 )
             )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
-            Text(
-                text = "비밀번호",
-                style = TextStyles.TITLE_MEDIUM2,
-                modifier = Modifier.align(Alignment.Start),
-            )
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
+//            Text(
+//                text = "비밀번호",
+//                style = TextStyles.TITLE_MEDIUM2,
+//                modifier = Modifier.align(Alignment.Start),
+//            )
+//            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
             CustomTextEditField(
+                label = "비밀번호를 입력하세요",
                 value = password,
                 onValueChange = { password = it },
                 keyboardOptions = KeyboardOptions(

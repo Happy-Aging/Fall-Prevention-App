@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.appname.happyAging.presentation.common.component.RadioButtonRow
 import com.appname.happyAging.presentation.common.component.CommonButton
+import com.appname.happyAging.presentation.common.component.CustomTextEditField
 import com.appname.happyAging.presentation.common.component.CustomTextFieldWithTitle
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
@@ -99,12 +100,12 @@ fun SignupScreen(
                 horizontalAlignment = Alignment.Start,
             ) {
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
-                CustomTextFieldWithTitle(text = "이름", value = userName, onValueChange = {userName = it})
+                CustomTextEditField(label = "이름을 입력하세요", value = userName, onValueChange = {userName = it})
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                CustomTextFieldWithTitle(text = "아이디", value = id, onValueChange = {id = it})
+                CustomTextEditField(label = "메일을 입력하세요", value = id, onValueChange = {id = it})
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                CustomTextFieldWithTitle(
-                    text = "비밀번호",
+                CustomTextEditField(
+                    label = "비밀번호를 입력하세요",
                     value = password,
                     onValueChange = {password = it},
                     keyboardOptions = KeyboardOptions(
@@ -113,8 +114,8 @@ fun SignupScreen(
                     )
                 )
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                CustomTextFieldWithTitle(
-                    text = "비밀번호 재확인",
+                CustomTextEditField(
+                    label = "비밀번호을 한 번 더 입력하세요",
                     value = passwordCheck,
                     onValueChange = {passwordCheck = it},
                     keyboardOptions = KeyboardOptions(
@@ -145,7 +146,7 @@ fun SignupScreen(
                 }
 
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                CustomTextFieldWithTitle(text = "상세주소", value = detailAddress, onValueChange = {
+                CustomTextEditField(label = "상세주소", value = detailAddress, onValueChange = {
                     detailAddress = it
                 })
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
@@ -169,7 +170,7 @@ fun SignupScreen(
                         .padding(bottom = Sizes.INTERVAL1),
                 )
                 Sex.values().forEach {sex ->
-                    RadioButtonRow(text = sexType.korean, value = sexType == sex, id = 0, onClick = {
+                    RadioButtonRow(text = sex.korean, value = sexType == sex, id = 0, onClick = {
                         sexType = sex
                     })
                 }
