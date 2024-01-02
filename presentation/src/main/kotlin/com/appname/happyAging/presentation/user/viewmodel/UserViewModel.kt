@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.repository.user.UserRepository
+import com.appname.happyAging.domain.usecase.auth.LoginUseCase
+import com.appname.happyAging.domain.usecase.auth.SignupUseCase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -17,8 +19,29 @@ import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val loginUseCase: LoginUseCase,
+    private val signupUseCase: SignupUseCase,
 ) : ViewModel() {
+
+    fun emailLogin(email: String, password: String) {
+        viewModelScope.launch {
+            loginUseCase(email, password).onSuccess {
+                Log.i(TAG, "로그인 성공")
+            }.onFailure {
+                Log.e(TAG, "로그인 실패", it)
+            }
+        }
+    }
+
+    fun signup(email: String, password: String, nickname: String) {
+        viewModelScope.launch {
+            signupUseCase(email, password, nickname).onSuccess {
+                Log.i(TAG, "회원가입 성공")
+            }.onFailure {
+                Log.e(TAG, "회원가입 실패", it)
+            }
+        }
+    }
 
     fun kakaoLogin(context: Context) {
         viewModelScope.launch {

@@ -1,9 +1,11 @@
 package com.appname.happyAging.presentation.user.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,8 +16,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +35,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,7 +55,7 @@ import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.user.component.KakaoButton
 import com.appname.happyAging.presentation.user.viewmodel.UserViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun LoginScreen(
     navController: NavController,
@@ -59,7 +67,7 @@ fun LoginScreen(
     ) {
         var id by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
-
+        var passwordVisible by rememberSaveable { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -72,42 +80,44 @@ fun LoginScreen(
             TopPart()
             ////////////////////////////
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
-//            Text(
-//                text = "아이디",
-//                style = TextStyles.TITLE_MEDIUM2,
-//                modifier = Modifier.align(Alignment.Start),
-//            )
-//            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
             CustomTextEditField(
                 label = "아이디를 입력하세요",
                 value = id,
                 onValueChange = { id = it },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
-                    imeAction =  ImeAction.Next
+                    imeAction = ImeAction.Next
                 )
             )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
-//            Text(
-//                text = "비밀번호",
-//                style = TextStyles.TITLE_MEDIUM2,
-//                modifier = Modifier.align(Alignment.Start),
-//            )
-//            Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
-            CustomTextEditField(
-                label = "비밀번호를 입력하세요",
-                value = password,
-                onValueChange = { password = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction =  ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        login(navController, id, password)
-                    }
+            Box(
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                CustomTextEditField(
+                    label = "비밀번호를 입력하세요",
+                    value = password,
+                    onValueChange = { password = it },
+                    visualTransformation = if (passwordVisible) {
+                        VisualTransformation.None
+                    } else {
+                        PasswordVisualTransformation()
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            login(navController, id, password, viewModel)
+                        }
+                    )
                 )
-            )
+                IconButton(onClick = {
+                    passwordVisible = !passwordVisible
+                }) {
+                    Icon(Icons.Filled.ThumbUp, contentDescription = "비밀번호 보기")
+                }
+            }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             CommonButton(
                 text = "로그인",
@@ -121,7 +131,7 @@ fun LoginScreen(
                     )
                 )
             ) {
-                login(navController, id, password)
+                login(navController, id, password, viewModel)
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Text(
@@ -178,8 +188,10 @@ fun LoginScreen(
 private fun login(
     navController: NavController,
     id: String,
-    password: String
+    password: String,
+    viewModel: UserViewModel,
 ) {
+    viewModel.emailLogin(id, password)
     navController.navigateMain()
 }
 
