@@ -9,6 +9,7 @@ object Sizes {
     val INTERVAL_LARGE3 = 30.dp
     val INTERVAL_LARGE4 = 20.dp
 
+    val INTERVAL_MEDIUM0 = 18.dp
     val INTERVAL_MEDIUM = 16.dp
     val INTERVAL_MEDIUM2 = 14.dp
 
