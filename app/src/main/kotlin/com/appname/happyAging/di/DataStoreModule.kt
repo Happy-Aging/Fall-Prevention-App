@@ -2,8 +2,9 @@ package com.appname.happyAging.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import com.appname.happyAging.data.datastore.jwtTokenDataStore
+import androidx.datastore.preferences.preferencesDataStoreFile
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +18,8 @@ object DataStoreModule {
     @Singleton
     @Provides
     fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
-        return context.jwtTokenDataStore
+        return PreferenceDataStoreFactory.create {
+            context.preferencesDataStoreFile("jwt_token")
+        }
     }
 }
