@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.senior.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -12,19 +13,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.HiltViewModelFactory
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.appname.happyAging.domain.model.senior.Sex
+import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextFieldWithTitle
 import com.appname.happyAging.presentation.common.component.RadioButtonRow
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
-import com.appname.happyAging.presentation.user.view.Sex
+import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
+import java.time.LocalDate
 
 enum class RelationWithSenior(
     val korean: String,
@@ -35,10 +44,13 @@ enum class RelationWithSenior(
     CARE("돌봄", "care"),
 }
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun CreateSeniorScreen(
-    navController: NavController
+    navController: NavController,
 ) {
+    val parentEntry = remember { navController.getBackStackEntry(BottomNavRouter.SENIOR_LIST.routePath) }
+    val viewModel : SeniorViewModel = hiltViewModel(parentEntry)
     DefaultLayout(
         title = Router.SENIOR_CREATE.korean,
         actions = {
@@ -83,7 +95,15 @@ fun CreateSeniorScreen(
             CommonButton(
                 text = "생성하기",
             ) {
-                //TODO LOGIC
+                val params = CreateSeniorParams(
+                    name = seniorName,
+                    birth = LocalDate.now(),
+                    sex = Sex.MALE,
+                    address = address,
+                    residence = detailAddress,
+                    )
+                viewModel.createSenior(params)
+                navController.popBackStack()
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
         }

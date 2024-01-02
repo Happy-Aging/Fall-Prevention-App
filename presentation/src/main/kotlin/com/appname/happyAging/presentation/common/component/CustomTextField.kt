@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.appname.happyAging.presentation.common.constant.Colors
@@ -36,6 +37,7 @@ fun CustomTextEditField(
         keyboardType = KeyboardType.Text,
         imeAction = ImeAction.Next
     ),
+    visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     value: String,
     label: String="",
@@ -60,6 +62,7 @@ fun CustomTextEditField(
                 .padding(start = Sizes.INTERVAL1),
             textStyle = TextStyles.CONTENT_TEXT2_STYLE,
             maxLines = 1,
+            visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             value = value,
             onValueChange = onValueChange,

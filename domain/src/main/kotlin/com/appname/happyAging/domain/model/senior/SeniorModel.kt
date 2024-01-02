@@ -10,6 +10,8 @@ class SeniorModel(
     val rank : Int,
 )
 
-enum class Sex{
-    MALE, FEMALE
+
+enum class Sex(val english:String, val korean: String){
+    MALE("male", "남자"),
+    FEMALE("female", "여자"),
 }
