@@ -45,6 +45,7 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
+import com.appname.happyAging.presentation.my.view.MyPageScreen
 import com.appname.happyAging.presentation.senior.view.CreateSeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
 
@@ -123,7 +124,7 @@ fun MainScreen(navController: NavController) {
                 SeniorScreen(navController = mainNavHostController)
             }
             composable(route = BottomNavRouter.PROFILE.routePath) {
-                Text("내정보")
+                MyPageScreen(navController = mainNavHostController)
             }
             composable(route = Router.SENIOR_CREATE.routePath) {
                 CreateSeniorScreen(navController = mainNavHostController)
