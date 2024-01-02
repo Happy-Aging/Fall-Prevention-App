@@ -23,6 +23,18 @@ class JwtTokenRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun saveAccessToken(accessToken: String) {
+        dataStore.edit {
+            it[ACCESS_TOKEN] = accessToken
+        }
+    }
+
+    override suspend fun saveRefreshToken(refreshToken: String) {
+        dataStore.edit {
+            it[REFRESH_TOKEN] = refreshToken
+        }
+    }
+
     override suspend fun getJwtToken(): JwtToken {
         val x= dataStore.data.map {prefs ->
             val accessToken = prefs[ACCESS_TOKEN]!!
