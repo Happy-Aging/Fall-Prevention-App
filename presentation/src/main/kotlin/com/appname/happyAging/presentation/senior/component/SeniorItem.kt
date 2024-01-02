@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.senior.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,14 +34,8 @@ import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
+import com.appname.happyAging.presentation.common.utils.noRippleClickable
 
-
-@Deprecated("임시 객체")
-val people = listOf(
-    Person("김춘자", 65, "성동구", "가족"),
-    Person("허말순", 81, "강서구", "가족"),
-    Person("양미령", 54, "강서구", "가족")
-)
 
 object SeniorItemFactory
 
@@ -96,10 +92,24 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            TextButton(onClick = {
-                isClicked = !isClicked
-            }) {
-                Text(text = "보기")
+            Box(
+                modifier = Modifier
+                    .width(52.dp)
+                    .height(30.dp)
+                    .background(
+                        color = Color(0xFFF2F2F2),
+                    ).noRippleClickable {
+                        isClicked = !isClicked
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    textAlign = TextAlign.Center,
+                    text = "보기",
+                    style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                        color = Colors.GREY_TEXT,
+                    ),
+                )
             }
         }
         if(isClicked) {
@@ -152,15 +162,6 @@ fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
 
     }
 }
-
-
-@Deprecated("임시 클래스")
-data class Person(
-    val name: String,
-    val age: Int,
-    val address: String,
-    val relation: String
-)
 
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
