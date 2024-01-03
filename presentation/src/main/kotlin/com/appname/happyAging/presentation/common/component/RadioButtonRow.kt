@@ -45,7 +45,7 @@ fun RadioButtonRow(text: String, value: Boolean, id: Int, onClick: (Int) -> Unit
         ClickableText(
             text = AnnotatedString(text),
             onClick = onClick,
-            modifier = Modifier.fillMaxWidth(),
+            //modifier = Modifier.fillMaxWidth(),
             style = TextStyles.CONTENT_TEXT2_STYLE
         )
     }

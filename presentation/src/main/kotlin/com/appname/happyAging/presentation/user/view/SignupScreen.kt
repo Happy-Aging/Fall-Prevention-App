@@ -6,11 +6,13 @@ import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -172,18 +174,42 @@ fun SignupScreen(
                     })
                 }
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                Text(
-                    text = "가입자 유형",
-                    style = TextStyles.TITLE_MEDIUM2,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(bottom = Sizes.INTERVAL1),
-                )
-                SignupType.values().forEach {type ->
-                    RadioButtonRow(text = type.korean, value = signupType == type, id = 0, onClick = {
-                        signupType = type
-                    })
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "가입자 유형",
+                        style = TextStyles.TITLE_MEDIUM2,
+                        modifier = Modifier.weight(2f),
+                    )
+                    //Spacer(modifier = Modifier.width(Sizes.INTERVAL_LARGE3))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.weight(5f),
+                    ) {
+
+                        SignupType.values().forEach {type ->
+                            RadioButtonRow(text = type.korean, value = signupType == type, id = 0,
+                                onClick = {
+                                    signupType = type
+                                })
+                            Spacer(modifier = Modifier.width(Sizes.INTERVAL_MEDIUM))
+                        }
+                    }
                 }
+                Row {
+                    Spacer(modifier = Modifier.weight(2f))
+                    Text(text = "*돌봄매니저란?\n해피에이징 소속 매니저입니다.",
+                        style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                            color = Colors.GREY_TEXT
+                        ),
+                        modifier = Modifier
+                            .weight(5f)
+                            .padding(bottom = Sizes.INTERVAL1),
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
                 CommonButton(text = "계정 만들기") {
                     navController.navigateMain()
