@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,6 +52,7 @@ import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
 import com.appname.happyAging.presentation.user.component.KakaoButton
 import com.appname.happyAging.presentation.user.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -60,6 +61,7 @@ fun LoginScreen(
     viewModel: UserViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val coroutineScopeKakao = rememberCoroutineScope()
     DefaultLayout(
         title = LoginRouter.LOGIN.korean,
     ) {
@@ -193,7 +195,15 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             KakaoButton(text = "카카오 로그인") {
-                viewModel.kakaoLogin(context)
+                coroutineScopeKakao.launch {
+                    val isRegister = viewModel.kakaoLogin(context)
+                    if(isRegister) {
+                        navController.navigateMain()
+                    }else {
+                        navController.go(LoginRouter.KAKAO_SIGNUP)
+                    }
+                }
+
             }
         }
     }

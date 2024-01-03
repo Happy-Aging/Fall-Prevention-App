@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appname.happyAging.domain.repository.user.UserRepository
 import com.appname.happyAging.domain.usecase.auth.LoginUseCase
 import com.appname.happyAging.domain.usecase.auth.SignupUseCase
 import com.kakao.sdk.auth.model.OAuthToken
@@ -43,15 +42,15 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    fun kakaoLogin(context: Context) {
-        viewModelScope.launch {
-            val kakaoAccessToken = handleKakaoLogin(context)
-            if(kakaoAccessToken == null){
-                Log.e(TAG, "카카오계정으로 로그인 실패")
-            }else{
-                Log.i(TAG, "카카오계정으로 로그인 성공 $kakaoAccessToken")
-            }
+    suspend fun kakaoLogin(context: Context) : Boolean {
+        val kakaoAccessToken = handleKakaoLogin(context)
+        if(kakaoAccessToken == null){
+            Log.e(TAG, "카카오계정으로 로그인 실패")
+        }else{
+            Log.i(TAG, "카카오계정으로 로그인 성공 $kakaoAccessToken")
         }
+        val isRegistered = false //TODO KakaoLoginUseCase
+        return isRegistered
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =
