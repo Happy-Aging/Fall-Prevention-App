@@ -115,7 +115,16 @@ fun LoginScreen(
                 IconButton(onClick = {
                     passwordVisible = !passwordVisible
                 }) {
-                    Icon(Icons.Filled.ThumbUp, contentDescription = "비밀번호 보기")
+                    val iconId = if (passwordVisible) {
+                        R.drawable.iconmonstr_eye_filled
+                    } else {
+                        R.drawable.iconmonstr_eye_off_filled
+                    }
+                    Icon(
+                        painter= painterResource(id = iconId),
+                        contentDescription = "비밀번호 보기",
+                        tint = Colors.ICON_UNSELECTED
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
