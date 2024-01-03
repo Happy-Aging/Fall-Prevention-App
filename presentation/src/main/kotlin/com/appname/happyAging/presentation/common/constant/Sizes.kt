@@ -13,6 +13,7 @@ object Sizes {
     val INTERVAL_MEDIUM = 16.dp
     val INTERVAL_MEDIUM2 = 14.dp
 
+    val INTERVAL0 = 10.dp
     val INTERVAL1 = 8.dp
     val INTERVAL2 = 6.dp
     val INTERVAL3 = 4.dp
