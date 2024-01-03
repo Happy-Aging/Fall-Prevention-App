@@ -99,6 +99,13 @@ fun SignupScreen(
                 horizontalAlignment = Alignment.Start,
             ) {
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
+                Text(
+                    text = "정보",
+                    style = TextStyles.TITLE_MEDIUM2,
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .padding(bottom = Sizes.INTERVAL1),
+                )
                 CustomTextEditField(label = "이름을 입력하세요", value = userName, onValueChange = {userName = it})
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
                 CustomTextEditField(label = "메일을 입력하세요", value = id, onValueChange = {id = it})
