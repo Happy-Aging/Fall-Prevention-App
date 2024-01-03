@@ -1,7 +1,9 @@
 package com.appname.happyAging.presentation.user.view
 
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +48,17 @@ import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthMissingActivityForRecaptchaException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthOptions
+import com.google.firebase.auth.PhoneAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 
 object SignupScreenFactory
 
@@ -63,24 +76,42 @@ enum class SignupType(val english: String, val korean: String){
     INDIVIDUAL("individual", "일반"),
     CARE_MANAGER("careManager", "돌봄매니저"),
 }
-
+val auth = Firebase.auth
+var verificationId = ""
+fun signInWithPhoneAuthCredential(activity: ComponentActivity,credential: PhoneAuthCredential) {
+    auth.signInWithCredential(credential)
+        .addOnCompleteListener(activity) { task ->
+            if (task.isSuccessful) {
+                Log.d("signInWithCredential", "signInWithCredential:success")
+            }
+            else {
+                Log.d("signInWithCredential", "signInWithCredential:failure")
+            }
+        }
+}
 @Composable
 fun SignupScreen(
     navController: NavController,
     isKakaoSignup: Boolean = false,
 ){
+    val activity = LocalContext.current as? ComponentActivity
+
+
     var userName by rememberSaveable { mutableStateOf("") }
     var id by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var passwordCheck by rememberSaveable { mutableStateOf("") }
-    var address by rememberSaveable { mutableStateOf("") }
-    var detailAddress by rememberSaveable { mutableStateOf("") }
-    var birthYear by rememberSaveable { mutableStateOf("") }
-    var sexType by rememberSaveable { mutableStateOf(Sex.MALE) }
+    var phoneNumber by rememberSaveable { mutableStateOf("") }
+
+    var smsCode by rememberSaveable { mutableStateOf("") }
+    //var address by rememberSaveable { mutableStateOf("") }
+    //var detailAddress by rememberSaveable { mutableStateOf("") }
+    //var birthYear by rememberSaveable { mutableStateOf("") }
+    //var sexType by rememberSaveable { mutableStateOf(Sex.MALE) }
     var signupType by rememberSaveable { mutableStateOf(SignupType.INDIVIDUAL) }
 
 
-    var openAlertDialog by rememberSaveable { mutableStateOf(false) }
+    //var openAlertDialog by rememberSaveable { mutableStateOf(false) }
     Box(
         modifier = Modifier.fillMaxSize()
     ){
@@ -130,57 +161,121 @@ fun SignupScreen(
                     ),
                 )
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                Box(
+                    contentAlignment = Alignment.CenterEnd,
+                ){
+                    CustomTextEditField(
+                        label = "휴대폰 번호을 입력하세요", value = phoneNumber,
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction =  ImeAction.Next,
+                        ),
+                        onValueChange = {phoneNumber = it})
+                    Text(
+                        text = "인증번호 받기",
+                        style = TextStyles.CONTENT_SMALL0_STYLE,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(bottom = Sizes.INTERVAL1)
+                            .clickable {
+                                Log.d("phone", "인증번호 받기 $phoneNumber")
+                                val callbacks = object :
+                                    PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+                                    override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
 
-                Text(
-                    text = "주소",
-                    style = TextStyles.TITLE_MEDIUM2,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(bottom = Sizes.INTERVAL1),
-                )
-                CommonButton(
-                    text = address,
-                    color = Color.Transparent,
-                    textColor = Colors.BLACK,
-                    modifier = Modifier.border(
-                        width = 1.dp,
-                        color = Colors.DIVIDER_GREY,
-                        shape = RoundedCornerShape(size = Sizes.BUTTON_ROUND)
+                                    override fun onVerificationFailed(e: FirebaseException) {
+                                    }
+
+                                    override fun onCodeSent(
+                                        returnVerificationId: String,
+                                        token: PhoneAuthProvider.ForceResendingToken
+                                    ) {
+                                        Log.d("onCodeSent", "onCodeSent $returnVerificationId")
+                                        verificationId = returnVerificationId
+                                    }
+                                }
+
+                                val optionsCompat = PhoneAuthOptions
+                                    .newBuilder(auth)
+                                    .setPhoneNumber("+8210$phoneNumber")
+                                    .setTimeout(60L, TimeUnit.SECONDS)
+                                    .setActivity(activity!!)
+                                    .setCallbacks(callbacks)
+                                    .build()
+                                PhoneAuthProvider.verifyPhoneNumber(optionsCompat)
+
+                            },
                     )
-                ) {
-                    openAlertDialog = true
+                }
+                Box(
+                    contentAlignment = Alignment.CenterEnd,
+                ){
+                    CustomTextEditField(label = "인증번호", value = smsCode, onValueChange = {smsCode = it})
+                    Text(
+                        text = "인증번호 확인",
+                        style = TextStyles.CONTENT_SMALL0_STYLE,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                            .padding(bottom = Sizes.INTERVAL1)
+                            .clickable {
+                                val credential =
+                                    PhoneAuthProvider.getCredential(verificationId, smsCode)
+                                signInWithPhoneAuthCredential(activity!!, credential)
+                            },
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                CustomTextEditField(label = "상세주소", value = detailAddress, onValueChange = {
-                    detailAddress = it
-                })
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-
-
-                Text(
-                    text = "출생년도",
-                    style = TextStyles.TITLE_MEDIUM2,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(bottom = Sizes.INTERVAL1),
-                )
-
-                ScrollableYears()
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-                Text(
-                    text = "성별",
-                    style = TextStyles.TITLE_MEDIUM2,
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(bottom = Sizes.INTERVAL1),
-                )
-                Sex.values().forEach {sex ->
-                    RadioButtonRow(text = sex.korean, value = sexType == sex, id = 0, onClick = {
-                        sexType = sex
-                    })
-                }
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+//                Text(
+//                    text = "주소",
+//                    style = TextStyles.TITLE_MEDIUM2,
+//                    modifier = Modifier
+//                        .align(Alignment.Start)
+//                        .padding(bottom = Sizes.INTERVAL1),
+//                )
+//                CommonButton(
+//                    text = address,
+//                    color = Color.Transparent,
+//                    textColor = Colors.BLACK,
+//                    modifier = Modifier.border(
+//                        width = 1.dp,
+//                        color = Colors.DIVIDER_GREY,
+//                        shape = RoundedCornerShape(size = Sizes.BUTTON_ROUND)
+//                    )
+//                ) {
+//                    openAlertDialog = true
+//                }
+//
+//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+//                CustomTextEditField(label = "상세주소", value = detailAddress, onValueChange = {
+//                    detailAddress = it
+//                })
+//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+//
+//
+//                Text(
+//                    text = "출생년도",
+//                    style = TextStyles.TITLE_MEDIUM2,
+//                    modifier = Modifier
+//                        .align(Alignment.Start)
+//                        .padding(bottom = Sizes.INTERVAL1),
+//                )
+//
+//                ScrollableYears()
+//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+//                Text(
+//                    text = "성별",
+//                    style = TextStyles.TITLE_MEDIUM2,
+//                    modifier = Modifier
+//                        .align(Alignment.Start)
+//                        .padding(bottom = Sizes.INTERVAL1),
+//                )
+//                Sex.values().forEach {sex ->
+//                    RadioButtonRow(text = sex.korean, value = sexType == sex, id = 0, onClick = {
+//                        sexType = sex
+//                    })
+//                }
+//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -224,15 +319,15 @@ fun SignupScreen(
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             }
         }
-        if(openAlertDialog){
-            AddressWebView(
-                onSelected = {
-                    Log.d("onSelected", "onSelected $it from SignupScreen")
-                    address = it
-                    openAlertDialog = false
-                }
-            )
-        }
+//        if(openAlertDialog){
+//            AddressWebView(
+//                onSelected = {
+//                    Log.d("onSelected", "onSelected $it from SignupScreen")
+//                    address = it
+//                    openAlertDialog = false
+//                }
+//            )
+//        }
     }
 
 

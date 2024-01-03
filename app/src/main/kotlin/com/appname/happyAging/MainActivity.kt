@@ -22,6 +22,11 @@ import com.appname.happyAging.MainActivityUiState.*
 import com.appname.happyAging.core.utils.NetworkMonitor
 import com.appname.happyAging.ui.HappyAgingApp
 import com.appname.happyAging.theme.Happy_agingTheme
+import com.google.firebase.Firebase
+import com.google.firebase.appcheck.appCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
+import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
+import com.google.firebase.initialize
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -36,6 +41,10 @@ class MainActivity : ComponentActivity() {
     lateinit var networkMonitor: NetworkMonitor
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
+        Firebase.initialize(context = this)
+        Firebase.appCheck.installAppCheckProviderFactory(
+            DebugAppCheckProviderFactory.getInstance(),
+        )
         super.onCreate(savedInstanceState)
 
 
