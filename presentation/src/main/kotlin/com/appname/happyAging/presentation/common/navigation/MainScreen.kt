@@ -1,39 +1,22 @@
 package com.appname.happyAging.presentation.common.navigation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.Interaction
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -41,8 +24,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.appname.happyAging.presentation.R
 import com.appname.happyAging.presentation.common.constant.Colors
-import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
 import com.appname.happyAging.presentation.my.view.EditInfoScreen
@@ -53,11 +36,11 @@ import com.appname.happyAging.presentation.senior.view.SeniorScreen
 enum class BottomNavRouter(
     val routePath: String,
     val korean: String,
-    val icon: ImageVector
+    val icon: Int
 ) {
-    FALL_PREVENTION("fall-prevention", "낙상 예방 콘텐츠", Icons.Default.Home),
-    SENIOR_LIST("senior-list", "시니어 목록", Icons.Default.Home),
-    PROFILE("profile", "내정보", Icons.Default.Home),
+    FALL_PREVENTION("fall-prevention", "낙상 예방 콘텐츠", R.drawable.content),
+    SENIOR_LIST("senior-list", "시니어 목록", R.drawable.home),
+    PROFILE("profile", "내정보", R.drawable.my),
 }
 
 enum class Router(
@@ -89,6 +72,7 @@ fun MainScreen(navController: NavController) {
                     containerColor = Colors.WHITE,
                 ) {
                     items.forEach { item ->
+                        val selected = item.routePath == currentRoute
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.Center,
@@ -97,14 +81,18 @@ fun MainScreen(navController: NavController) {
                                 .fillMaxHeight()
                                 .noRippleClickable {
                                     mainNavHostController.navigate(item.routePath) {
-                                        popUpTo(mainNavHostController.graph.startDestinationId){
+                                        popUpTo(mainNavHostController.graph.startDestinationId) {
                                             inclusive = false
                                         }
                                         launchSingleTop = true
                                     }
                                 }
                         ) {
-                            Icon(imageVector = item.icon, contentDescription = null)
+                            Icon(
+                                painter = painterResource(id = item.icon),
+                                contentDescription = null,
+                                tint = if (selected) Colors.ICON_SELECTED else Colors.ICON_UNSELECTED,
+                            )
                             Text(text = item.korean, style = TextStyles.CONTENT_SMALL2_STYLE)
                         }
                     }
