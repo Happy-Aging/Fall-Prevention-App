@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
@@ -37,18 +38,18 @@ import com.appname.happyAging.presentation.common.utils.noRippleClickable
 object SeniorItemFactory
 
 @Composable
-fun SeniorItemFactory.fromModel(person: SeniorModel) {
+fun SeniorItemFactory.fromModel(model: SeniorModel) {
     SeniorItem(
-        number = person.id.toInt(),
-        name = person.name,
-        age = person.age,
-        address = person.address,
-        relation = person.profile,
+        fallRiskRank = model.fallRiskRank,
+        name = model.name,
+        age = model.age,
+        address = model.address,
+        relation = model.relation,
     )
 }
 
 @Composable
-fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: String) {
+fun SeniorItem(fallRiskRank: Int?,name: String, age: Int?, address: String, relation: RelationWithSenior) {
     var isClicked by rememberSaveable { mutableStateOf(false) }
     Column {
         Row(
@@ -67,10 +68,19 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     .background(Color(0xFFD96666)),
                 contentAlignment = Alignment.Center
             ) {
+                fallRiskRank?.let {
+                    Text(
+                        text = "$it",
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                } ?:
                 Text(
-                    text = "$number",
-                    fontSize = 24.sp,
+                    text = "등급\n없음",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    lineHeight = 14.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White
                 )
@@ -82,7 +92,7 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     style = TextStyles.TITLE_MEDIUM1,
                 )
                 Text(
-                    text = "${age}세 / $address / $relation",
+                    text = "$address / ${relation.korean} ${age?.let { "/ $it 세" } ?: ""}",
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                         color = Colors.GREY_TEXT,
                     ),
@@ -95,7 +105,8 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     .height(30.dp)
                     .background(
                         color = Color(0xFFF2F2F2),
-                    ).noRippleClickable {
+                    )
+                    .noRippleClickable {
                         isClicked = !isClicked
                     },
                 contentAlignment = Alignment.Center,
@@ -163,5 +174,5 @@ fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun SeniorItemPreview() {
-    SeniorItem(number = 1, name = "김춘자", age = 65, address = "성동구", relation = "가족")
+    SeniorItemFactory.fromModel(model = SeniorModel.fixture(fallRiskRank = null))
 }
