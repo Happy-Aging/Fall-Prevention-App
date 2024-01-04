@@ -51,14 +51,14 @@ import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
 import com.appname.happyAging.presentation.user.component.KakaoButton
-import com.appname.happyAging.presentation.user.viewmodel.UserViewModel
+import com.appname.happyAging.presentation.user.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(
     navController: NavController,
-    viewModel: UserViewModel = hiltViewModel(),
+    viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val coroutineScopeKakao = rememberCoroutineScope()
@@ -213,7 +213,7 @@ private fun login(
     navController: NavController,
     id: String,
     password: String,
-    viewModel: UserViewModel,
+    viewModel: AuthViewModel,
 ) {
     viewModel.emailLogin(id, password)
     navController.navigateMain()

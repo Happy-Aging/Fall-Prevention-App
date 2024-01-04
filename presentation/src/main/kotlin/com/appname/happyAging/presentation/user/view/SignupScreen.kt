@@ -3,18 +3,15 @@ package com.appname.happyAging.presentation.user.view
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -46,7 +43,6 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 object SignupScreenFactory
@@ -90,10 +86,6 @@ fun SignupScreen(
     var phoneNumber by rememberSaveable { mutableStateOf("") }
 
     var smsCode by rememberSaveable { mutableStateOf("") }
-    //var address by rememberSaveable { mutableStateOf("") }
-    //var detailAddress by rememberSaveable { mutableStateOf("") }
-    //var birthYear by rememberSaveable { mutableStateOf("") }
-    //var sexType by rememberSaveable { mutableStateOf(Sex.MALE) }
     var signupType by rememberSaveable { mutableStateOf(UserType.INDIVIDUAL) }
 
 
@@ -212,56 +204,7 @@ fun SignupScreen(
                 }
 
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-//                Text(
-//                    text = "주소",
-//                    style = TextStyles.TITLE_MEDIUM2,
-//                    modifier = Modifier
-//                        .align(Alignment.Start)
-//                        .padding(bottom = Sizes.INTERVAL1),
-//                )
-//                CommonButton(
-//                    text = address,
-//                    color = Color.Transparent,
-//                    textColor = Colors.BLACK,
-//                    modifier = Modifier.border(
-//                        width = 1.dp,
-//                        color = Colors.DIVIDER_GREY,
-//                        shape = RoundedCornerShape(size = Sizes.BUTTON_ROUND)
-//                    )
-//                ) {
-//                    openAlertDialog = true
-//                }
-//
-//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-//                CustomTextEditField(label = "상세주소", value = detailAddress, onValueChange = {
-//                    detailAddress = it
-//                })
-//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-//
-//
-//                Text(
-//                    text = "출생년도",
-//                    style = TextStyles.TITLE_MEDIUM2,
-//                    modifier = Modifier
-//                        .align(Alignment.Start)
-//                        .padding(bottom = Sizes.INTERVAL1),
-//                )
-//
-//                ScrollableYears()
-//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-//                Text(
-//                    text = "성별",
-//                    style = TextStyles.TITLE_MEDIUM2,
-//                    modifier = Modifier
-//                        .align(Alignment.Start)
-//                        .padding(bottom = Sizes.INTERVAL1),
-//                )
-//                Sex.values().forEach {sex ->
-//                    RadioButtonRow(text = sex.korean, value = sexType == sex, id = 0, onClick = {
-//                        sexType = sex
-//                    })
-//                }
-//                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -318,24 +261,6 @@ fun SignupScreen(
 
 
 }
-@Composable
-fun ScrollableYears() {
-    val scrollState = rememberScrollState()
-    val years = LocalDate.now().year
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(Sizes.BUTTON_HEIGHT),
-        flingBehavior = ScrollableDefaults.flingBehavior()
-    ) {
-        items(100) { index ->
-            Text("${years - index}")
-        }
-    }
-}
-
-
 @Composable
 @Preview
 fun SignupScreenPreview() {
