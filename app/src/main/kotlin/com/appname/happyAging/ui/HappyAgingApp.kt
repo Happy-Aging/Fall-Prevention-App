@@ -1,10 +1,8 @@
 package com.appname.happyAging.ui
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -32,6 +30,7 @@ fun HappyAgingApp(
     appState: HappyAgingAppState = rememberHappyAgingAppState(
         networkMonitor = networkMonitor,
     ),
+    startDestination: TopLevelDestination,
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -53,10 +52,13 @@ fun HappyAgingApp(
         },
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().padding(it),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
         ) {
             HappyAgingNavHost(
                 appState = appState,
+                startDestination = startDestination.routePath,
             )
         }
     }
