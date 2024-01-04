@@ -11,7 +11,7 @@ class UserModel(
 ){
     companion object {
         fun fixture(
-            name: String = "",
+            name: String = "홍길동",
             phoneNumber: String = "010-1234-5678",
             userType: UserType = UserType.INDIVIDUAL,
             vendor: VendorType = VendorType.KAKAO,
