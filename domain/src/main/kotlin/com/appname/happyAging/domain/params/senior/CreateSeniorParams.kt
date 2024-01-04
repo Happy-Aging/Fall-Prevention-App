@@ -8,20 +8,19 @@ class CreateSeniorParams(
     val address: String,
     val phoneNumber: String?,
     val relation: RelationWithSenior,
-) {
-    /**
-     * 긍정적 응답을 위해 [SeniorModel]로 변환한다.
-     */
-    fun toModel(id: Long): SeniorModel {
-        return SeniorModel(
-            id = id,
-            name = name,
-            age = null,
-            address = address,
-            phoneNumber = phoneNumber,
-            relation = relation,
-            fallRiskRank = null,
-        )
-    }
-}
+)
 
+/**
+ * 긍정적 응답을 위해 [SeniorModel]로 변환한다.
+ */
+fun CreateSeniorParams.toModel(id: Long): SeniorModel {
+    return SeniorModel(
+        id = id,
+        name = name,
+        age = null,
+        address = address,
+        phoneNumber = phoneNumber,
+        relation = relation,
+        fallRiskRank = null,
+    )
+}

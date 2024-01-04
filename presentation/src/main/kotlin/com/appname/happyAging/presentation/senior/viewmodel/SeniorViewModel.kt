@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 import com.appname.happyAging.domain.params.senior.UpdateSeniorParams
+import com.appname.happyAging.domain.params.senior.toModel
 import com.appname.happyAging.domain.params.senior.update
 import com.appname.happyAging.domain.usecase.senior.CreateSeniorUseCase
 import com.appname.happyAging.domain.usecase.senior.DeleteSeniorUseCase
