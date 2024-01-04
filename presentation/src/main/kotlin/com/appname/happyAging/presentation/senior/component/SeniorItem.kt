@@ -1,5 +1,7 @@
 package com.appname.happyAging.presentation.senior.component
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.model.senior.SeniorModel
+import com.appname.happyAging.presentation.R
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
@@ -38,13 +42,14 @@ import com.appname.happyAging.presentation.common.utils.noRippleClickable
 object SeniorItemFactory
 
 @Composable
-fun SeniorItemFactory.fromModel(model: SeniorModel) {
+fun SeniorItemFactory.fromModel(model: SeniorModel, onEditClicked: () -> Unit = {}) {
     SeniorItem(
         fallRiskRank = model.fallRiskRank,
         name = model.name,
         age = model.age,
         address = model.address,
         relation = model.relation,
+        onEditClicked = onEditClicked
     )
 }
 
@@ -54,7 +59,8 @@ fun SeniorItem(
     name: String,
     age: Int?,
     address: String,
-    relation: RelationWithSenior
+    relation: RelationWithSenior,
+    onEditClicked: () -> Unit,
 ) {
     var isClicked by rememberSaveable { mutableStateOf(false) }
     Column {
@@ -112,13 +118,14 @@ fun SeniorItem(
                         color = Color(0xFFF2F2F2),
                     )
                     .noRippleClickable {
+                        if (isClicked) onEditClicked()
                         isClicked = !isClicked
                     },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "보기",
+                    text = if(isClicked) "수정" else "보기",
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                         color = Colors.GREY_TEXT,
                     ),
@@ -134,16 +141,25 @@ fun SeniorItem(
                         vertical = Sizes.INTERVAL_LARGE4,
                     )
             ) {
-                SeniorDetailMenu(title = "새로", detailContent = "낙상 위험도 측정하기", onClick = { })
-                SeniorDetailMenu(title = "이전", detailContent = "낙상 위험도 보기", onClick = { })
-                SeniorDetailMenu(title = "집 안", detailContent = "사진찍기", onClick = { })
+                SeniorDetailMenu(title = "새로", detailContent = "낙상 위험도 측정하기",
+                    iconId = R.drawable.list,
+                    onClick = { })
+                SeniorDetailMenu(title = "이전", detailContent = "낙상 위험도 보기",
+                    iconId = R.drawable.folder,
+                    onClick = { })
+                SeniorDetailMenu(title = "집 안", detailContent = "사진찍기",
+                    iconId = R.drawable.picture,
+                    onClick = { })
             }
         }
     }
 }
 
 @Composable
-fun SeniorDetailMenu(title: String, detailContent: String, onClick: () -> Unit) {
+fun SeniorDetailMenu(
+    title: String, detailContent: String,
+    @DrawableRes iconId: Int,
+    onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .height(120.dp)
@@ -171,6 +187,13 @@ fun SeniorDetailMenu(title: String, detailContent: String, onClick: () -> Unit) 
         Text(
             text = detailContent,
             style = TextStyles.TITLE_MEDIUM2,
+        )
+        Image(
+            modifier = Modifier
+                .align(Alignment.End)
+                .size(38.dp),
+            painter = painterResource(id = iconId),
+            contentDescription = null
         )
 
     }

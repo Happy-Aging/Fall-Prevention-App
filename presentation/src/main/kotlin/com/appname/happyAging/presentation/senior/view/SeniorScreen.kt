@@ -52,7 +52,9 @@ fun SeniorScreen(
                 }
                 is UiState.Success -> {
                     (seniorList.value as UiState.Success<List<SeniorModel>>).data.forEach{ person ->
-                        SeniorItemFactory.fromModel(person)
+                        SeniorItemFactory.fromModel(person){
+                            navController.navigate("${Router.SENIOR_EDIT.routePath}/${person.id}")
+                        }
                         Divider()
                     }
                     // TODO : 성공했을때
