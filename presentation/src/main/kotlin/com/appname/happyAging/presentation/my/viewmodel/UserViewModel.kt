@@ -24,6 +24,10 @@ class UserViewModel @Inject constructor(
     val user : StateFlow<UiState<UserModel>> get() = _user
 
     private val _user = MutableStateFlow<UiState<UserModel>>(UiState.Loading)
+
+    init {
+        getUser()
+    }
     fun getUser(){
         viewModelScope.launch {
             getUserUseCase().onSuccess { userModel ->

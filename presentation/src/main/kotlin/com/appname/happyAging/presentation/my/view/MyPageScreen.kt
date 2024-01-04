@@ -15,6 +15,7 @@ import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
+import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
 
 @Composable
@@ -28,7 +29,7 @@ fun MyPageScreen(navController: NavController){
             }
             Divider()
             TextRow(text = "정보수정") {
-                //todo
+                navController.navigate(Router.EDIT_INFO.routePath)
             }
             Divider()
             TextRow(text = "개인정보 이용약관") {
