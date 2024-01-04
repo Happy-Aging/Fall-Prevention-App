@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.appname.happyAging.domain.params.auth.UserType
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextEditField
 import com.appname.happyAging.presentation.common.component.RadioButtonRow
@@ -60,10 +61,7 @@ fun SignupScreenFactory.kakaoSignup(navController: NavController) {
     SignupScreen(navController =navController)
 }
 
-enum class SignupType(val english: String, val korean: String){
-    INDIVIDUAL("individual", "일반"),
-    CARE_MANAGER("careManager", "돌봄매니저"),
-}
+
 val auth = Firebase.auth
 var verificationId = ""
 fun signInWithPhoneAuthCredential(activity: ComponentActivity,credential: PhoneAuthCredential) {
@@ -96,7 +94,7 @@ fun SignupScreen(
     //var detailAddress by rememberSaveable { mutableStateOf("") }
     //var birthYear by rememberSaveable { mutableStateOf("") }
     //var sexType by rememberSaveable { mutableStateOf(Sex.MALE) }
-    var signupType by rememberSaveable { mutableStateOf(SignupType.INDIVIDUAL) }
+    var signupType by rememberSaveable { mutableStateOf(UserType.INDIVIDUAL) }
 
 
     //var openAlertDialog by rememberSaveable { mutableStateOf(false) }
@@ -279,7 +277,7 @@ fun SignupScreen(
                         modifier = Modifier.weight(5f),
                     ) {
 
-                        SignupType.values().forEach {type ->
+                        UserType.values().forEach {type ->
                             RadioButtonRow(text = type.korean, value = signupType == type, id = 0,
                                 onClick = {
                                     signupType = type

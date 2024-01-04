@@ -42,6 +42,9 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 카카오계정으로 로그인. viewModel에서 호출한다.
+     */
     suspend fun kakaoLogin(context: Context) : Boolean {
         val kakaoAccessToken = handleKakaoLogin(context)
         if(kakaoAccessToken == null){
