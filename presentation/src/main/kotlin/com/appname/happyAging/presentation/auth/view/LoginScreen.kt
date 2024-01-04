@@ -1,4 +1,4 @@
-package com.appname.happyAging.presentation.user.view
+package com.appname.happyAging.presentation.auth.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -39,7 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.presentation.R
+import com.appname.happyAging.presentation.auth.component.KakaoButton
+import com.appname.happyAging.presentation.auth.viewmodel.AuthViewModel
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextEditField
 import com.appname.happyAging.presentation.common.constant.Colors
@@ -50,8 +53,6 @@ import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
-import com.appname.happyAging.presentation.user.component.KakaoButton
-import com.appname.happyAging.presentation.user.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
 
@@ -215,7 +216,11 @@ private fun login(
     password: String,
     viewModel: AuthViewModel,
 ) {
-    viewModel.emailLogin(id, password)
+    val params = LoginParams(
+        email = id,
+        password = password
+    )
+    viewModel.emailLogin(params)
     navController.navigateMain()
 }
 

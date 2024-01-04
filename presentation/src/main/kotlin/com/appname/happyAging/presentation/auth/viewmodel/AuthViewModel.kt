@@ -1,11 +1,16 @@
-package com.appname.happyAging.presentation.user.viewmodel
+package com.appname.happyAging.presentation.auth.viewmodel
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.params.auth.LoginParams
+import com.appname.happyAging.domain.params.auth.SignupParams
+import com.appname.happyAging.domain.params.auth.SocialLoginParams
+import com.appname.happyAging.domain.params.auth.VendorType
 import com.appname.happyAging.domain.usecase.auth.LoginUseCase
 import com.appname.happyAging.domain.usecase.auth.SignupUseCase
+import com.appname.happyAging.domain.usecase.auth.SocialLoginUseCase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -19,12 +24,13 @@ import kotlin.coroutines.suspendCoroutine
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
+    private val socialLoginUseCase: SocialLoginUseCase,
     private val signupUseCase: SignupUseCase,
 ) : ViewModel() {
 
-    fun emailLogin(email: String, password: String) {
+    fun emailLogin(loginParams: LoginParams) {
         viewModelScope.launch {
-            loginUseCase(email, password).onSuccess {
+            loginUseCase(loginParams).onSuccess {
                 Log.i(TAG, "로그인 성공")
             }.onFailure {
                 Log.e(TAG, "로그인 실패", it)
@@ -32,10 +38,13 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signup(email: String, password: String, nickname: String) {
+    fun signup(signupParams: SignupParams, context: Context) {
         viewModelScope.launch {
-            signupUseCase(email, password, nickname).onSuccess {
+            signupUseCase(signupParams).onSuccess {
                 Log.i(TAG, "회원가입 성공")
+                if(signupParams.vendor != VendorType.HAPPY_AGING){
+                    kakaoLogin(context)
+                }
             }.onFailure {
                 Log.e(TAG, "회원가입 실패", it)
             }
@@ -46,14 +55,17 @@ class AuthViewModel @Inject constructor(
      * 카카오계정으로 로그인. viewModel에서 호출한다.
      */
     suspend fun kakaoLogin(context: Context) : Boolean {
-        val kakaoAccessToken = handleKakaoLogin(context)
-        if(kakaoAccessToken == null){
+        val kakaoToken = handleKakaoLogin(context)
+        if(kakaoToken == null){
             Log.e(TAG, "카카오계정으로 로그인 실패")
-        }else{
-            Log.i(TAG, "카카오계정으로 로그인 성공 $kakaoAccessToken")
+            return false
         }
-        val isRegistered = false //TODO KakaoLoginUseCase
-        return isRegistered
+        val params = SocialLoginParams(
+            accessToken = kakaoToken.accessToken,
+            vendor = VendorType.KAKAO
+        )
+        socialLoginUseCase(params)
+        return true
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =

@@ -4,10 +4,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.appname.happyAging.presentation.user.view.LoginScreen
-import com.appname.happyAging.presentation.user.view.SignupScreenFactory
-import com.appname.happyAging.presentation.user.view.emailSignup
-import com.appname.happyAging.presentation.user.view.kakaoSignup
+import com.appname.happyAging.presentation.auth.view.LoginScreen
+import com.appname.happyAging.presentation.auth.view.SignupScreenFactory
+import com.appname.happyAging.presentation.auth.view.emailSignup
+import com.appname.happyAging.presentation.auth.view.kakaoSignup
 
 const val LOGIN_GRAPH_ROUTE_PATTERN = "/login"
 

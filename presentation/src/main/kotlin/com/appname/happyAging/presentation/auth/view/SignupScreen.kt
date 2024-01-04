@@ -1,4 +1,4 @@
-package com.appname.happyAging.presentation.user.view
+package com.appname.happyAging.presentation.auth.view
 
 import android.util.Log
 import androidx.activity.ComponentActivity
