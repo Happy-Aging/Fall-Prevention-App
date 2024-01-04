@@ -13,6 +13,6 @@ object Colors {
     val TEXT_FIELD_GREY = Color(0xFFD9D9D9)
     val PRIMARY_ORANGE = Color(0xFFE58310)
 
-    val ICON_SELECTED = Color(0xFF626262)
-    val ICON_UNSELECTED = Color(0xFFD9D9D9)
+    val SELECTED_ICON = Color(0xFF626262)
+    val UNSELECTED_ICON = Color(0xFFD9D9D9)
 }

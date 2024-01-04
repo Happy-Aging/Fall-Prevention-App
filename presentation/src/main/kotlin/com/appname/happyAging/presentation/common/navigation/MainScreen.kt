@@ -91,7 +91,7 @@ fun MainScreen(navController: NavController) {
                             Icon(
                                 painter = painterResource(id = item.icon),
                                 contentDescription = null,
-                                tint = if (selected) Colors.ICON_SELECTED else Colors.ICON_UNSELECTED,
+                                tint = if (selected) Colors.SELECTED_ICON else Colors.UNSELECTED_ICON,
                             )
                             Text(text = item.korean, style = TextStyles.CONTENT_SMALL2_STYLE)
                         }

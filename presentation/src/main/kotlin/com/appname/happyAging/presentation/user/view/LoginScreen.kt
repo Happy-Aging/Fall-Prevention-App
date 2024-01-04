@@ -130,7 +130,7 @@ fun LoginScreen(
                     Icon(
                         painter= painterResource(id = iconId),
                         contentDescription = "비밀번호 보기",
-                        tint = Colors.ICON_UNSELECTED
+                        tint = Colors.UNSELECTED_ICON
                     )
                 }
             }
