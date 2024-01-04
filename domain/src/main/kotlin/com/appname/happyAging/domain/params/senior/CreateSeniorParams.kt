@@ -1,24 +1,27 @@
 package com.appname.happyAging.domain.params.senior
 
-import com.appname.happyAging.domain.model.senior.Sex
-import java.time.LocalDate
+import com.appname.happyAging.domain.model.senior.RelationWithSenior
+import com.appname.happyAging.domain.model.senior.SeniorModel
 
 class CreateSeniorParams(
     val name: String,
-    val birth: LocalDate,
-    val sex: Sex,
     val address: String,
-    val residence: String,
-){
-    companion object{
-        fun fixture() : CreateSeniorParams{
-            return CreateSeniorParams(
-                "김복자",
-                LocalDate.now(),
-                Sex.MALE,
-                "서울시 강남구",
-                "서울시 강남구",
-            )
-        }
+    val phoneNumber: String?,
+    val relation: RelationWithSenior,
+) {
+    /**
+     * 긍정적 응답을 위해 [SeniorModel]로 변환한다.
+     */
+    fun toModel(id: Long): SeniorModel {
+        return SeniorModel(
+            id = id,
+            name = name,
+            age = null,
+            address = address,
+            phoneNumber = phoneNumber,
+            relation = relation,
+            fallRiskRank = null,
+        )
     }
 }
+

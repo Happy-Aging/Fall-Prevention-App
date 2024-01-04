@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.appname.happyAging.domain.model.senior.Sex
+import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextEditField
@@ -37,16 +37,7 @@ import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
-import java.time.LocalDate
 
-enum class RelationWithSenior(
-    val korean: String,
-    val english: String,
-){
-    SELF("본인", "self"),
-    FAMILY("가족", "family"),
-    CARE("돌봄 대상 시니어", "care"),
-}
 
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
@@ -128,10 +119,9 @@ fun CreateSeniorScreen(
             ) {
                 val params = CreateSeniorParams(
                     name = seniorName,
-                    birth = LocalDate.now(),
-                    sex = Sex.MALE,
                     address = address,
-                    residence = detailAddress,
+                    phoneNumber = seniorPhoneNumber.ifEmpty { null },
+                    relation = relation,
                     )
                 viewModel.createSenior(params)
                 navController.popBackStack()

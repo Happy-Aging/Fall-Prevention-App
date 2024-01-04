@@ -1,10 +1,8 @@
 package com.appname.happyAging.presentation.senior.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.model.senior.SeniorModel
-import com.appname.happyAging.domain.model.senior.Sex
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 import com.appname.happyAging.domain.usecase.senior.CreateSeniorUseCase
 import com.appname.happyAging.domain.usecase.senior.DeleteSeniorUseCase
@@ -32,8 +30,8 @@ class SeniorViewModel @Inject constructor(
 
     fun getSenior(){
         viewModelScope.launch {
-            getSeniorUseCase().onSuccess {
-                _senior.value = UiState.Success(it)
+            getSeniorUseCase().onSuccess { seniorList ->
+                _senior.value = UiState.Success(seniorList)
             }.onFailure {
                 _senior.value = UiState.Error(it.message ?: "Unknown error")
             }
@@ -43,17 +41,9 @@ class SeniorViewModel @Inject constructor(
     fun createSenior(createSeniorParams: CreateSeniorParams){
         if(_senior.value !is UiState.Success) return
         viewModelScope.launch {
-            createSeniorUseCase(createSeniorParams).onSuccess {
+            createSeniorUseCase(createSeniorParams).onSuccess { newId ->
                 val list = (_senior.value as UiState.Success).data.toMutableList()
-                val newModel = SeniorModel(
-                    id = it,
-                    name = createSeniorParams.name,
-                    address = createSeniorParams.address,
-                    sex = createSeniorParams.sex,
-                    age = 12,
-                    profile = "",
-                    rank = 1,
-                )
+                val newModel = createSeniorParams.toModel(newId)
                 list.add(newModel)
                 _senior.value = UiState.Success(list)
             }.onFailure {
