@@ -115,7 +115,7 @@ fun MainScreen(navController: NavController) {
                 SeniorScreen(navController = mainNavHostController)
             }
             composable(route = BottomNavRouter.PROFILE.routePath) {
-                MyPageScreen(navController = mainNavHostController)
+                MyPageScreen(navController = mainNavHostController, rootNavController = navController)
             }
             composable(route = Router.SENIOR_CREATE.routePath) {
                 CreateSeniorScreen(navController = mainNavHostController)
