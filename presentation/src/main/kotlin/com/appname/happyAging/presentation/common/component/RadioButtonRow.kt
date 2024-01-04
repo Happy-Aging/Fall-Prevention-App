@@ -13,8 +13,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.appname.happyAging.presentation.common.constant.Colors
+import com.appname.happyAging.presentation.common.constant.TextStyles
 
 @Composable
 fun RadioButtonRow(text: String, value: Boolean, id: Int, onClick: (Int) -> Unit) {
@@ -41,7 +43,16 @@ fun RadioButtonRow(text: String, value: Boolean, id: Int, onClick: (Int) -> Unit
         )
         Spacer(modifier = Modifier.width(10.dp))
         ClickableText(
-            text = AnnotatedString(text), onClick = onClick, modifier = Modifier.fillMaxWidth()
+            text = AnnotatedString(text),
+            onClick = onClick,
+            //modifier = Modifier.fillMaxWidth(),
+            style = TextStyles.CONTENT_TEXT2_STYLE
         )
     }
+}
+
+@Composable
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+fun PreviewRadioButtonRow() {
+    RadioButtonRow(text = "본인", value = true, id = 0, onClick = {})
 }

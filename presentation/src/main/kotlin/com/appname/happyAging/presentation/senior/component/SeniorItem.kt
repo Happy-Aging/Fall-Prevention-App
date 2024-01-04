@@ -1,6 +1,5 @@
 package com.appname.happyAging.presentation.senior.component
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,12 +22,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
@@ -40,18 +38,24 @@ import com.appname.happyAging.presentation.common.utils.noRippleClickable
 object SeniorItemFactory
 
 @Composable
-fun SeniorItemFactory.fromModel(person: SeniorModel) {
+fun SeniorItemFactory.fromModel(model: SeniorModel) {
     SeniorItem(
-        number = person.id.toInt(),
-        name = person.name,
-        age = person.age,
-        address = person.address,
-        relation = person.profile,
+        fallRiskRank = model.fallRiskRank,
+        name = model.name,
+        age = model.age,
+        address = model.address,
+        relation = model.relation,
     )
 }
 
 @Composable
-fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: String) {
+fun SeniorItem(
+    fallRiskRank: Int?,
+    name: String,
+    age: Int?,
+    address: String,
+    relation: RelationWithSenior
+) {
     var isClicked by rememberSaveable { mutableStateOf(false) }
     Column {
         Row(
@@ -70,10 +74,18 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     .background(Color(0xFFD96666)),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "$number",
-                    fontSize = 24.sp,
+                fallRiskRank?.let {
+                    Text(
+                        text = "$it",
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        color = Color.White
+                    )
+                } ?: Text(
+                    text = "등급\n없음",
                     fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    lineHeight = 14.sp,
                     textAlign = TextAlign.Center,
                     color = Color.White
                 )
@@ -85,7 +97,7 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     style = TextStyles.TITLE_MEDIUM1,
                 )
                 Text(
-                    text = "${age}세 / $address / $relation",
+                    text = "$address / ${relation.korean} ${age?.let { "/ $it 세" } ?: ""}",
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                         color = Colors.GREY_TEXT,
                     ),
@@ -98,7 +110,8 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     .height(30.dp)
                     .background(
                         color = Color(0xFFF2F2F2),
-                    ).noRippleClickable {
+                    )
+                    .noRippleClickable {
                         isClicked = !isClicked
                     },
                 contentAlignment = Alignment.Center,
@@ -112,7 +125,7 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                 )
             }
         }
-        if(isClicked) {
+        if (isClicked) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -120,17 +133,17 @@ fun SeniorItem(number: Int,name: String, age: Int, address: String, relation: St
                     .padding(
                         vertical = Sizes.INTERVAL_LARGE4,
                     )
-            ){
-                SeniorDetailMenu(title = "새로", content = "낙상 위험도 측정하기", onClick = {  })
-                SeniorDetailMenu(title = "이전", content = "낙상 위험도 보기", onClick = {  })
-                SeniorDetailMenu(title = "집 안", content = "사진찍기", onClick = {  })
+            ) {
+                SeniorDetailMenu(title = "새로", detailContent = "낙상 위험도 측정하기", onClick = { })
+                SeniorDetailMenu(title = "이전", detailContent = "낙상 위험도 보기", onClick = { })
+                SeniorDetailMenu(title = "집 안", detailContent = "사진찍기", onClick = { })
             }
         }
     }
 }
 
 @Composable
-fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
+fun SeniorDetailMenu(title: String, detailContent: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .height(120.dp)
@@ -156,7 +169,7 @@ fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Text(
-            text = content,
+            text = detailContent,
             style = TextStyles.TITLE_MEDIUM2,
         )
 
@@ -166,5 +179,5 @@ fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
 @Composable
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 fun SeniorItemPreview() {
-    SeniorItem(number = 1, name = "김춘자", age = 65, address = "성동구", relation = "가족")
+    SeniorItemFactory.fromModel(model = SeniorModel.fixture(fallRiskRank = null))
 }

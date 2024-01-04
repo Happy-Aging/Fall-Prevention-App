@@ -1,11 +1,11 @@
 package com.appname.happyAging.presentation.senior.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.model.senior.SeniorModel
-import com.appname.happyAging.domain.model.senior.Sex
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
+import com.appname.happyAging.domain.params.senior.UpdateSeniorParams
+import com.appname.happyAging.domain.params.senior.update
 import com.appname.happyAging.domain.usecase.senior.CreateSeniorUseCase
 import com.appname.happyAging.domain.usecase.senior.DeleteSeniorUseCase
 import com.appname.happyAging.domain.usecase.senior.GetSeniorUseCase
@@ -24,36 +24,29 @@ class SeniorViewModel @Inject constructor(
     private val updateSeniorUseCase: UpdateSeniorUseCase,
     private val deleteSeniorUseCase: DeleteSeniorUseCase,
 ) : ViewModel() {
-    val senior : StateFlow<UiState<List<SeniorModel>>> get() = _senior
+    val senior: StateFlow<UiState<List<SeniorModel>>> get() = _senior
     private val _senior = MutableStateFlow<UiState<List<SeniorModel>>>(UiState.Loading)
+
     init {
         getSenior()
     }
 
-    fun getSenior(){
+    fun getSenior() {
         viewModelScope.launch {
-            getSeniorUseCase().onSuccess {
-                _senior.value = UiState.Success(it)
+            getSeniorUseCase().onSuccess { seniorList ->
+                _senior.value = UiState.Success(seniorList)
             }.onFailure {
                 _senior.value = UiState.Error(it.message ?: "Unknown error")
             }
         }
     }
 
-    fun createSenior(createSeniorParams: CreateSeniorParams){
-        if(_senior.value !is UiState.Success) return
+    fun createSenior(createSeniorParams: CreateSeniorParams) {
+        if (_senior.value !is UiState.Success) return
         viewModelScope.launch {
-            createSeniorUseCase(createSeniorParams).onSuccess {
+            createSeniorUseCase(createSeniorParams).onSuccess { newId ->
                 val list = (_senior.value as UiState.Success).data.toMutableList()
-                val newModel = SeniorModel(
-                    id = it,
-                    name = createSeniorParams.name,
-                    address = createSeniorParams.address,
-                    sex = createSeniorParams.sex,
-                    age = 12,
-                    profile = "",
-                    rank = 1,
-                )
+                val newModel = createSeniorParams.toModel(newId)
                 list.add(newModel)
                 _senior.value = UiState.Success(list)
             }.onFailure {
@@ -62,4 +55,39 @@ class SeniorViewModel @Inject constructor(
         }
     }
 
+    fun updateSenior(updateSeniorParams: UpdateSeniorParams) {
+        if (_senior.value !is UiState.Success) return
+        val state = (_senior.value as UiState.Success).data
+        val model = state.find { it.id == updateSeniorParams.id } ?: return
+
+        // 긍정적 응답
+        val updatedModel = model.update(updateSeniorParams)
+        val list = state.toMutableList()
+        val index = list.indexOf(model)
+        list[index] = updatedModel
+        _senior.value = UiState.Success(list)
+
+        viewModelScope.launch {
+            updateSeniorUseCase(updateSeniorParams).onFailure {
+                _senior.value = UiState.Error(it.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun deleteSenior(id: Long) {
+        if (_senior.value !is UiState.Success) return
+        val state = (_senior.value as UiState.Success).data
+        val model = state.find { it.id == id } ?: return
+
+        // 긍정적 응답
+        val list = state.toMutableList()
+        list.remove(model)
+        _senior.value = UiState.Success(list)
+
+        viewModelScope.launch {
+            deleteSeniorUseCase(id).onFailure {
+                _senior.value = UiState.Error(it.message ?: "Unknown error")
+            }
+        }
+    }
 }

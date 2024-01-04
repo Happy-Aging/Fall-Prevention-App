@@ -1,6 +1,5 @@
 package com.appname.happyAging.presentation.user.view
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,16 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,8 +49,10 @@ import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
+import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
 import com.appname.happyAging.presentation.user.component.KakaoButton
 import com.appname.happyAging.presentation.user.viewmodel.UserViewModel
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -62,12 +61,14 @@ fun LoginScreen(
     viewModel: UserViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val coroutineScopeKakao = rememberCoroutineScope()
     DefaultLayout(
         title = LoginRouter.LOGIN.korean,
     ) {
         var id by rememberSaveable { mutableStateOf("") }
         var password by rememberSaveable { mutableStateOf("") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
+        var passwordIsRemove  by rememberSaveable { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -96,11 +97,17 @@ fun LoginScreen(
                 CustomTextEditField(
                     label = "비밀번호를 입력하세요",
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        // 새로 추가할경우에만 추가글자 보이게
+                        passwordIsRemove = it.length < password.length
+                        password = it
+                    },
                     visualTransformation = if (passwordVisible) {
                         VisualTransformation.None
-                    } else {
+                    } else if (passwordIsRemove){
                         PasswordVisualTransformation()
+                    }else{
+                        CustomPassWordVisualTransformation()
                     },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Password,
@@ -115,7 +122,16 @@ fun LoginScreen(
                 IconButton(onClick = {
                     passwordVisible = !passwordVisible
                 }) {
-                    Icon(Icons.Filled.ThumbUp, contentDescription = "비밀번호 보기")
+                    val iconId = if (passwordVisible) {
+                        R.drawable.iconmonstr_eye_filled
+                    } else {
+                        R.drawable.iconmonstr_eye_off_filled
+                    }
+                    Icon(
+                        painter= painterResource(id = iconId),
+                        contentDescription = "비밀번호 보기",
+                        tint = Colors.UNSELECTED_ICON
+                    )
                 }
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
@@ -179,7 +195,15 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             KakaoButton(text = "카카오 로그인") {
-                viewModel.kakaoLogin(context)
+                coroutineScopeKakao.launch {
+                    val isRegister = viewModel.kakaoLogin(context)
+                    if(isRegister) {
+                        navController.navigateMain()
+                    }else {
+                        navController.go(LoginRouter.KAKAO_SIGNUP)
+                    }
+                }
+
             }
         }
     }
