@@ -46,8 +46,15 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             signupUseCase(signupParams).onSuccess {
                 Log.i(TAG, "회원가입 성공")
-                if(signupParams.vendor != VendorType.HAPPY_AGING){
-                    kakaoLogin(context)
+                when(signupParams.vendor) {
+                    VendorType.KAKAO -> kakaoLogin(context)
+                    VendorType.HAPPY_AGING -> {
+                        val loginParams = LoginParams(
+                            email = signupParams.email,
+                            password = signupParams.password!!
+                        )
+                        emailLogin(loginParams)
+                    }
                 }
             }.onFailure {
                 Log.e(TAG, "회원가입 실패", it)
@@ -55,9 +62,6 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    /**
-     * 카카오계정으로 로그인. viewModel에서 호출한다.
-     */
     fun kakaoLogin(context: Context) {
         viewModelScope.launch{
             val kakaoToken = handleKakaoLogin(context)
