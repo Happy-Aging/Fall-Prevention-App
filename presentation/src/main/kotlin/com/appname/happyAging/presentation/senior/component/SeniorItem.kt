@@ -38,13 +38,14 @@ import com.appname.happyAging.presentation.common.utils.noRippleClickable
 object SeniorItemFactory
 
 @Composable
-fun SeniorItemFactory.fromModel(model: SeniorModel) {
+fun SeniorItemFactory.fromModel(model: SeniorModel, onEditClicked: () -> Unit = {}) {
     SeniorItem(
         fallRiskRank = model.fallRiskRank,
         name = model.name,
         age = model.age,
         address = model.address,
         relation = model.relation,
+        onEditClicked = onEditClicked
     )
 }
 
@@ -54,7 +55,8 @@ fun SeniorItem(
     name: String,
     age: Int?,
     address: String,
-    relation: RelationWithSenior
+    relation: RelationWithSenior,
+    onEditClicked: () -> Unit,
 ) {
     var isClicked by rememberSaveable { mutableStateOf(false) }
     Column {
@@ -112,13 +114,14 @@ fun SeniorItem(
                         color = Color(0xFFF2F2F2),
                     )
                     .noRippleClickable {
+                        if(isClicked) onEditClicked()
                         isClicked = !isClicked
                     },
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     textAlign = TextAlign.Center,
-                    text = "보기",
+                    text = if(isClicked) "수정" else "보기",
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                         color = Colors.GREY_TEXT,
                     ),
