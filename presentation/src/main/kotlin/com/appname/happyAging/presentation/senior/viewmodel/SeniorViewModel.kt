@@ -24,13 +24,14 @@ class SeniorViewModel @Inject constructor(
     private val updateSeniorUseCase: UpdateSeniorUseCase,
     private val deleteSeniorUseCase: DeleteSeniorUseCase,
 ) : ViewModel() {
-    val senior : StateFlow<UiState<List<SeniorModel>>> get() = _senior
+    val senior: StateFlow<UiState<List<SeniorModel>>> get() = _senior
     private val _senior = MutableStateFlow<UiState<List<SeniorModel>>>(UiState.Loading)
+
     init {
         getSenior()
     }
 
-    fun getSenior(){
+    fun getSenior() {
         viewModelScope.launch {
             getSeniorUseCase().onSuccess { seniorList ->
                 _senior.value = UiState.Success(seniorList)
@@ -40,8 +41,8 @@ class SeniorViewModel @Inject constructor(
         }
     }
 
-    fun createSenior(createSeniorParams: CreateSeniorParams){
-        if(_senior.value !is UiState.Success) return
+    fun createSenior(createSeniorParams: CreateSeniorParams) {
+        if (_senior.value !is UiState.Success) return
         viewModelScope.launch {
             createSeniorUseCase(createSeniorParams).onSuccess { newId ->
                 val list = (_senior.value as UiState.Success).data.toMutableList()
@@ -54,36 +55,39 @@ class SeniorViewModel @Inject constructor(
         }
     }
 
-    fun updateSenior(updateSeniorParams: UpdateSeniorParams){
-        if(_senior.value !is UiState.Success) return
+    fun updateSenior(updateSeniorParams: UpdateSeniorParams) {
+        if (_senior.value !is UiState.Success) return
         val state = (_senior.value as UiState.Success).data
         val model = state.find { it.id == updateSeniorParams.id } ?: return
+
+        // 긍정적 응답
+        val updatedModel = model.update(updateSeniorParams)
+        val list = state.toMutableList()
+        val index = list.indexOf(model)
+        list[index] = updatedModel
+        _senior.value = UiState.Success(list)
+
         viewModelScope.launch {
-            updateSeniorUseCase(updateSeniorParams).onSuccess {
-                val list = state.toMutableList()
-                val updatedModel = model.update(updateSeniorParams)
-                val index = list.indexOf(model)
-                list[index] = updatedModel
-                _senior.value = UiState.Success(list)
-            }.onFailure {
+            updateSeniorUseCase(updateSeniorParams).onFailure {
                 _senior.value = UiState.Error(it.message ?: "Unknown error")
             }
         }
     }
 
-    fun deleteSenior(id: Long){
-        if(_senior.value !is UiState.Success) return
+    fun deleteSenior(id: Long) {
+        if (_senior.value !is UiState.Success) return
         val state = (_senior.value as UiState.Success).data
         val model = state.find { it.id == id } ?: return
+
+        // 긍정적 응답
+        val list = state.toMutableList()
+        list.remove(model)
+        _senior.value = UiState.Success(list)
+
         viewModelScope.launch {
-            deleteSeniorUseCase(id).onSuccess {
-                val list = state.toMutableList()
-                list.remove(model)
-                _senior.value = UiState.Success(list)
-            }.onFailure {
+            deleteSeniorUseCase(id).onFailure {
                 _senior.value = UiState.Error(it.message ?: "Unknown error")
             }
         }
     }
-
 }
