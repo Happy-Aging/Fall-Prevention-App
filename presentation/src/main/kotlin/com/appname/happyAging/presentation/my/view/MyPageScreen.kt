@@ -30,7 +30,7 @@ fun MyPageScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             TextRow(text = "로그아웃") {
-                //todo
+                viewModel.logout()
             }
             Divider()
             TextRow(text = "정보수정") {

@@ -7,6 +7,7 @@ import com.appname.happyAging.domain.params.user.UpdateUserParams
 import com.appname.happyAging.domain.params.user.update
 import com.appname.happyAging.domain.usecase.user.DeleteUserUseCase
 import com.appname.happyAging.domain.usecase.user.GetUserUseCase
+import com.appname.happyAging.domain.usecase.user.LogoutUseCase
 import com.appname.happyAging.domain.usecase.user.UpdateUserUseCase
 import com.appname.happyAging.presentation.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ class UserViewModel @Inject constructor(
     private val getUserUseCase: GetUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
     private val deleteUserUseCase: DeleteUserUseCase,
+    private val logoutUseCase: LogoutUseCase,
 ) : ViewModel(){
     val user : StateFlow<UiState<UserModel>> get() = _user
 
@@ -55,6 +57,14 @@ class UserViewModel @Inject constructor(
 
         viewModelScope.launch {
             deleteUserUseCase().onFailure {
+                _user.value = UiState.Error(it.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun logout(){
+        viewModelScope.launch {
+            logoutUseCase().onFailure {
                 _user.value = UiState.Error(it.message ?: "Unknown error")
             }
         }
