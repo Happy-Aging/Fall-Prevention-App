@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
+import com.appname.happyAging.domain.params.senior.UpdateSeniorParams
+import com.appname.happyAging.domain.params.senior.update
 import com.appname.happyAging.domain.usecase.senior.CreateSeniorUseCase
 import com.appname.happyAging.domain.usecase.senior.DeleteSeniorUseCase
 import com.appname.happyAging.domain.usecase.senior.GetSeniorUseCase
@@ -45,6 +47,38 @@ class SeniorViewModel @Inject constructor(
                 val list = (_senior.value as UiState.Success).data.toMutableList()
                 val newModel = createSeniorParams.toModel(newId)
                 list.add(newModel)
+                _senior.value = UiState.Success(list)
+            }.onFailure {
+                _senior.value = UiState.Error(it.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun updateSenior(updateSeniorParams: UpdateSeniorParams){
+        if(_senior.value !is UiState.Success) return
+        val state = (_senior.value as UiState.Success).data
+        val model = state.find { it.id == updateSeniorParams.id } ?: return
+        viewModelScope.launch {
+            updateSeniorUseCase(updateSeniorParams).onSuccess {
+                val list = state.toMutableList()
+                val updatedModel = model.update(updateSeniorParams)
+                val index = list.indexOf(model)
+                list[index] = updatedModel
+                _senior.value = UiState.Success(list)
+            }.onFailure {
+                _senior.value = UiState.Error(it.message ?: "Unknown error")
+            }
+        }
+    }
+
+    fun deleteSenior(id: Long){
+        if(_senior.value !is UiState.Success) return
+        val state = (_senior.value as UiState.Success).data
+        val model = state.find { it.id == id } ?: return
+        viewModelScope.launch {
+            deleteSeniorUseCase(id).onSuccess {
+                val list = state.toMutableList()
+                list.remove(model)
                 _senior.value = UiState.Success(list)
             }.onFailure {
                 _senior.value = UiState.Error(it.message ?: "Unknown error")
