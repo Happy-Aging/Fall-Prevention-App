@@ -9,3 +9,4 @@ data class CreateSeniorRequest(
     val birth: String,
     val relation : RelationWithSenior,
 )
+

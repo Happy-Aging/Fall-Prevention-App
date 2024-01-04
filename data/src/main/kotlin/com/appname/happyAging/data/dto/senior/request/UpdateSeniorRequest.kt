@@ -9,3 +9,5 @@ data class UpdateSeniorRequest(
     val birth: String,
     val relation : RelationWithSenior,
 )
+
+

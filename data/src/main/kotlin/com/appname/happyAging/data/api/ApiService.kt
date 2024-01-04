@@ -34,7 +34,7 @@ interface ApiService {
 
     //--------------------- User ---------------------//
     @GET("/user")
-    suspend fun getUserList(): UserResponse
+    suspend fun getUser(): UserResponse
 
     @PUT("/user")
     suspend fun updateUser(@Body request: UpdateUserRequest)
