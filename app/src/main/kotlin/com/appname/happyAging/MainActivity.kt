@@ -1,9 +1,11 @@
 package com.appname.happyAging
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -13,19 +15,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.appname.happyAging.MainActivityUiState.*
+import com.appname.happyAging.MainActivityUiState.Loading
+import com.appname.happyAging.MainActivityUiState.Success
 import com.appname.happyAging.core.utils.NetworkMonitor
-import com.appname.happyAging.ui.HappyAgingApp
+import com.appname.happyAging.navigation.TopLevelDestination
 import com.appname.happyAging.theme.Happy_agingTheme
+import com.appname.happyAging.ui.HappyAgingApp
 import com.google.firebase.Firebase
 import com.google.firebase.appcheck.appCheck
 import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
-import com.google.firebase.appcheck.playintegrity.PlayIntegrityAppCheckProviderFactory
 import com.google.firebase.initialize
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.onEach
@@ -58,12 +60,12 @@ class MainActivity : ComponentActivity() {
         }
 
         splashScreen.setKeepVisibleCondition {
+            Log.d("MainActivity", "uiState: $uiState")
             when (uiState) {
                 is Success -> false
                 else -> true
             }
         }
-
 
         setContent {
             Happy_agingTheme {
@@ -72,7 +74,23 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HappyAgingApp(networkMonitor = networkMonitor)
+                    when(uiState) {
+                        is Loading -> {
+                            Spacer(modifier =Modifier.fillMaxSize())
+                        }
+                        is Success -> {
+                            val isLogin = (uiState as Success).jwtToken != null
+                            val startDestination = if(isLogin) {
+                                TopLevelDestination.MAIN
+                            } else {
+                                TopLevelDestination.LOGIN
+                            }
+                            HappyAgingApp(
+                                networkMonitor = networkMonitor,
+                                startDestination = startDestination,
+                            )
+                        }
+                    }
                 }
             }
         }

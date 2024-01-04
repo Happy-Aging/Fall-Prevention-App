@@ -10,25 +10,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
+import com.appname.happyAging.presentation.common.navigation.Router
+import com.appname.happyAging.presentation.common.navigation.navigateLogin
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
+import com.appname.happyAging.presentation.my.viewmodel.UserViewModel
 
 @Composable
-fun MyPageScreen(navController: NavController){
+fun MyPageScreen(
+    navController: NavController,
+    rootNavController: NavController,
+    viewModel : UserViewModel = hiltViewModel(),
+){
     DefaultLayout(title = BottomNavRouter.PROFILE.korean) {
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
             TextRow(text = "로그아웃") {
-                //todo
+                viewModel.logout()
+                rootNavController.navigateLogin()
             }
             Divider()
             TextRow(text = "정보수정") {
-                //todo
+                navController.navigate(Router.EDIT_INFO.routePath)
             }
             Divider()
             TextRow(text = "개인정보 이용약관") {
@@ -36,7 +45,8 @@ fun MyPageScreen(navController: NavController){
             }
             Divider()
             TextRow(text = "회원 탈퇴") {
-                //todo
+                viewModel.deleteUser()
+                rootNavController.navigateLogin()
             }
             Divider()
         }
@@ -64,5 +74,6 @@ fun TextRow(text: String, onClick: () -> Unit){
 @Preview
 @Composable
 fun MyPageScreenPreview(){
-    MyPageScreen(navController = NavController(LocalContext.current))
+    val navController = NavController(LocalContext.current)
+    MyPageScreen(navController,navController)
 }

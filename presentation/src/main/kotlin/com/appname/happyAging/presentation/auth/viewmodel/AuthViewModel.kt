@@ -1,56 +1,82 @@
-package com.appname.happyAging.presentation.user.viewmodel
+package com.appname.happyAging.presentation.auth.viewmodel
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.params.auth.LoginParams
+import com.appname.happyAging.domain.params.auth.SignupParams
+import com.appname.happyAging.domain.params.auth.SocialLoginParams
+import com.appname.happyAging.domain.params.auth.VendorType
 import com.appname.happyAging.domain.usecase.auth.LoginUseCase
 import com.appname.happyAging.domain.usecase.auth.SignupUseCase
+import com.appname.happyAging.domain.usecase.auth.SocialLoginUseCase
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @HiltViewModel
-class UserViewModel @Inject constructor(
+class AuthViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
+    private val socialLoginUseCase: SocialLoginUseCase,
     private val signupUseCase: SignupUseCase,
 ) : ViewModel() {
 
-    fun emailLogin(email: String, password: String) {
+    val isLogin: StateFlow<Boolean> get() = _isLogin
+    private val _isLogin = MutableStateFlow(false)
+    fun emailLogin(loginParams: LoginParams) {
         viewModelScope.launch {
-            loginUseCase(email, password).onSuccess {
-                Log.i(TAG, "로그인 성공")
+            loginUseCase(loginParams).onSuccess {
+                _isLogin.value = true
             }.onFailure {
                 Log.e(TAG, "로그인 실패", it)
             }
         }
     }
 
-    fun signup(email: String, password: String, nickname: String) {
+    fun signup(signupParams: SignupParams, context: Context) {
         viewModelScope.launch {
-            signupUseCase(email, password, nickname).onSuccess {
+            signupUseCase(signupParams).onSuccess {
                 Log.i(TAG, "회원가입 성공")
+                when(signupParams.vendor) {
+                    VendorType.KAKAO -> kakaoLogin(context)
+                    VendorType.HAPPY_AGING -> {
+                        val loginParams = LoginParams(
+                            email = signupParams.email,
+                            password = signupParams.password!!
+                        )
+                        emailLogin(loginParams)
+                    }
+                }
             }.onFailure {
                 Log.e(TAG, "회원가입 실패", it)
             }
         }
     }
 
-    suspend fun kakaoLogin(context: Context) : Boolean {
-        val kakaoAccessToken = handleKakaoLogin(context)
-        if(kakaoAccessToken == null){
-            Log.e(TAG, "카카오계정으로 로그인 실패")
-        }else{
-            Log.i(TAG, "카카오계정으로 로그인 성공 $kakaoAccessToken")
+    fun kakaoLogin(context: Context) {
+        viewModelScope.launch{
+            val kakaoToken = handleKakaoLogin(context)
+            if(kakaoToken == null){
+                Log.e(TAG, "카카오계정으로 로그인 실패")
+                _isLogin.value = false
+                return@launch
+            }
+            val params = SocialLoginParams(
+                accessToken = kakaoToken.accessToken,
+                vendor = VendorType.KAKAO
+            )
+            socialLoginUseCase(params)
+            _isLogin.value = true
         }
-        val isRegistered = false //TODO KakaoLoginUseCase
-        return isRegistered
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =

@@ -1,6 +1,5 @@
 package com.appname.happyAging.data.api
 
-import android.content.SharedPreferences
 import com.appname.happyAging.data.api.ApiConstants.BASE_URL
 import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import com.google.gson.Gson
@@ -24,12 +23,12 @@ class AuthInterceptor @Inject constructor(
             return null
         }
         val refreshToken = runBlocking {
-            jwtTokenRepository.getJwtToken().refreshToken
+            jwtTokenRepository.getJwtToken()!!.refreshToken
         }
         val refreshRequest = Request.Builder()
             .url("$BASE_URL/reissue")
             .post("".toRequestBody())
-            .addHeader("authorization", "Bearer ${refreshToken!!}")
+            .addHeader("authorization", "Bearer ${refreshToken}")
             .build()
         val refreshResponse = OkHttpClient().newCall(refreshRequest).execute()
         if(refreshResponse.code == 200) {
@@ -68,7 +67,7 @@ class HeaderInterceptor @Inject constructor(
 
         var token = ""
         runBlocking {
-            val accessToken = jwtTokenRepository.getJwtToken().accessToken
+            val accessToken = jwtTokenRepository.getJwtToken()!!.accessToken
             token = ("Bearer $accessToken")
         }
         val newRequest = chain.request().newBuilder()

@@ -1,32 +1,27 @@
 package com.appname.happyAging
 
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.model.auth.JwtToken
+import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    prefs: SharedPreferences,
+    private val jwtTokenRepository: JwtTokenRepository,
 ) : ViewModel() {
-    val uiState: StateFlow<MainActivityUiState>
-    = prefs.getString("accessToken", "")?.let {
-        flow<MainActivityUiState> {
-            emit(MainActivityUiState.Success)
-        }
-    }?.stateIn(viewModelScope, SharingStarted.Lazily, MainActivityUiState.Loading) ?: flow<MainActivityUiState> {
-        emit(MainActivityUiState.Loading)
+    val uiState : StateFlow<MainActivityUiState> = flow{
+        val token = jwtTokenRepository.getJwtToken()
+        emit(MainActivityUiState.Success(token))
     }.stateIn(viewModelScope, SharingStarted.Lazily, MainActivityUiState.Loading)
 }
 
 sealed interface MainActivityUiState {
     object Loading : MainActivityUiState
-    object Success : MainActivityUiState
+    data class Success(val jwtToken: JwtToken?) : MainActivityUiState
 }

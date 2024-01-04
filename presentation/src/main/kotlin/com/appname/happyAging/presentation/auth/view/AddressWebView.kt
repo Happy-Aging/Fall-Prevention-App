@@ -1,13 +1,9 @@
-package com.appname.happyAging.presentation.user.view
+package com.appname.happyAging.presentation.auth.view
 
-import android.graphics.Bitmap
 import android.util.Log
-import android.webkit.PermissionRequest
 import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
