@@ -16,6 +16,8 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -28,10 +30,12 @@ class AuthViewModel @Inject constructor(
     private val signupUseCase: SignupUseCase,
 ) : ViewModel() {
 
+    val isLogin: StateFlow<Boolean> get() = _isLogin
+    private val _isLogin = MutableStateFlow(false)
     fun emailLogin(loginParams: LoginParams) {
         viewModelScope.launch {
             loginUseCase(loginParams).onSuccess {
-                Log.i(TAG, "로그인 성공")
+                _isLogin.value = true
             }.onFailure {
                 Log.e(TAG, "로그인 실패", it)
             }
@@ -54,18 +58,21 @@ class AuthViewModel @Inject constructor(
     /**
      * 카카오계정으로 로그인. viewModel에서 호출한다.
      */
-    suspend fun kakaoLogin(context: Context) : Boolean {
-        val kakaoToken = handleKakaoLogin(context)
-        if(kakaoToken == null){
-            Log.e(TAG, "카카오계정으로 로그인 실패")
-            return false
+    fun kakaoLogin(context: Context) {
+        viewModelScope.launch{
+            val kakaoToken = handleKakaoLogin(context)
+            if(kakaoToken == null){
+                Log.e(TAG, "카카오계정으로 로그인 실패")
+                _isLogin.value = false
+                return@launch
+            }
+            val params = SocialLoginParams(
+                accessToken = kakaoToken.accessToken,
+                vendor = VendorType.KAKAO
+            )
+            socialLoginUseCase(params)
+            _isLogin.value = true
         }
-        val params = SocialLoginParams(
-            accessToken = kakaoToken.accessToken,
-            vendor = VendorType.KAKAO
-        )
-        socialLoginUseCase(params)
-        return true
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =

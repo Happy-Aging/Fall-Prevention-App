@@ -20,13 +20,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -53,7 +54,6 @@ import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -62,12 +62,17 @@ fun LoginScreen(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val coroutineScopeKakao = rememberCoroutineScope()
+    val isLogin = viewModel.isLogin.collectAsState()
+    if(isLogin.value){
+        navController.navigateMain()
+    }
     DefaultLayout(
         title = LoginRouter.LOGIN.korean,
     ) {
         var id by rememberSaveable { mutableStateOf("") }
+        var idError: String? by rememberSaveable { mutableStateOf(null) }
         var password by rememberSaveable { mutableStateOf("") }
+        var passwordError: String? by rememberSaveable { mutableStateOf(null) }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
         var passwordIsRemove  by rememberSaveable { mutableStateOf(false) }
         Column(
@@ -89,8 +94,19 @@ fun LoginScreen(
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
-                )
+                ),
+                isError = true,
             )
+            idError?.let {
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
+                Text(
+                    text = it,
+                    style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                        color = Color.Red
+                    ),
+                    textAlign = TextAlign.Left,
+                )
+            }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Box(
                 contentAlignment = Alignment.CenterEnd,
@@ -116,7 +132,7 @@ fun LoginScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            login(navController, id, password, viewModel)
+                            login(id, password, viewModel)
                         }
                     )
                 )
@@ -135,6 +151,16 @@ fun LoginScreen(
                     )
                 }
             }
+            passwordError?.let {
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
+                Text(
+                    text = it,
+                    style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                        color = Color.Red
+                    ),
+                    textAlign = TextAlign.Left,
+                )
+            }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             CommonButton(
                 text = "로그인",
@@ -148,7 +174,15 @@ fun LoginScreen(
                     )
                 )
             ) {
-                login(navController, id, password, viewModel)
+                if(id.isEmpty()){
+                    idError = "아이디를 입력해주세요"
+                    return@CommonButton
+                }
+                if(password.isEmpty()){
+                    passwordError = "비밀번호를 입력해주세요"
+                    return@CommonButton
+                }
+                login(id, password, viewModel)
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Text(
@@ -196,22 +230,13 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             KakaoButton(text = "카카오 로그인") {
-                coroutineScopeKakao.launch {
-                    val isRegister = viewModel.kakaoLogin(context)
-                    if(isRegister) {
-                        navController.navigateMain()
-                    }else {
-                        navController.go(LoginRouter.KAKAO_SIGNUP)
-                    }
-                }
-
+                viewModel.kakaoLogin(context)
             }
         }
     }
 }
 
 private fun login(
-    navController: NavController,
     id: String,
     password: String,
     viewModel: AuthViewModel,
@@ -221,7 +246,6 @@ private fun login(
         password = password
     )
     viewModel.emailLogin(params)
-    navController.navigateMain()
 }
 
 @Composable
