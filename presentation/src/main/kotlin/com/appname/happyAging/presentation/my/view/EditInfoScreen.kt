@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.my.view
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,15 +38,18 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.state.UiState
 import com.appname.happyAging.presentation.my.viewmodel.UserViewModel
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun EditInfoScreen(
     navController: NavController,
-    viewModel : UserViewModel = hiltViewModel(),
 ){
+    val parentEntry = remember { navController.getBackStackEntry(BottomNavRouter.PROFILE.routePath) }
+    val viewModel : UserViewModel = hiltViewModel(parentEntry)
     val state = viewModel.user.collectAsState()
     DefaultLayout(
         title = Router.EDIT_INFO.korean,

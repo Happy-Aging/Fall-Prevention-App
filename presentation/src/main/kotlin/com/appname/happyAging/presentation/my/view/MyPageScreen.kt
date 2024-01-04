@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
@@ -17,9 +18,13 @@ import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
+import com.appname.happyAging.presentation.my.viewmodel.UserViewModel
 
 @Composable
-fun MyPageScreen(navController: NavController){
+fun MyPageScreen(
+    navController: NavController,
+    viewModel : UserViewModel = hiltViewModel(),
+){
     DefaultLayout(title = BottomNavRouter.PROFILE.korean) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -37,7 +42,7 @@ fun MyPageScreen(navController: NavController){
             }
             Divider()
             TextRow(text = "회원 탈퇴") {
-                //todo
+                viewModel.deleteUser()
             }
             Divider()
         }
