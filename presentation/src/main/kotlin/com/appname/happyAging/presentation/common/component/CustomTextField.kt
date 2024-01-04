@@ -45,7 +45,7 @@ fun CustomTextEditField(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = if(isError) Colors.TEXT_FIELD_GREY else Color.Red,
+                color = if(isError) Color.Red else Colors.TEXT_FIELD_GREY,
                 shape = RoundedCornerShape(size = 5.dp)
             )
             .background(color = Colors.WHITE),

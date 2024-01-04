@@ -95,11 +95,13 @@ fun LoginScreen(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
                 ),
-                isError = true,
+                isError = idError != null,
             )
             idError?.let {
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
                 Text(
+                    modifier = Modifier
+                        .align(Alignment.Start),
                     text = it,
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                         color = Color.Red
@@ -132,9 +134,27 @@ fun LoginScreen(
                     ),
                     keyboardActions = KeyboardActions(
                         onDone = {
-                            login(id, password, viewModel)
+                            idError = if(id.isEmpty()){
+                                "아이디를 입력해주세요"
+                            }else{
+                                null
+                            }
+                            passwordError = if(password.isEmpty()){
+                                "비밀번호를 입력해주세요"
+                            }else{
+                                null
+                            }
+                            if(idError != null || passwordError != null){
+                                return@KeyboardActions
+                            }
+                            val params = LoginParams(
+                                email = id,
+                                password = password
+                            )
+                            viewModel.emailLogin(params)
                         }
-                    )
+                    ),
+                    isError = passwordError != null,
                 )
                 IconButton(onClick = {
                     passwordVisible = !passwordVisible
@@ -152,8 +172,10 @@ fun LoginScreen(
                 }
             }
             passwordError?.let {
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
                 Text(
+                    modifier = Modifier
+                        .align(Alignment.Start),
                     text = it,
                     style = TextStyles.CONTENT_SMALL0_STYLE.copy(
                         color = Color.Red
@@ -174,15 +196,25 @@ fun LoginScreen(
                     )
                 )
             ) {
-                if(id.isEmpty()){
-                    idError = "아이디를 입력해주세요"
+                idError = if(id.isEmpty()){
+                    "아이디를 입력해주세요"
+                }else{
+                    null
+                }
+                passwordError = if(password.isEmpty()){
+                    "비밀번호를 입력해주세요"
+                }else{
+                    null
+                }
+                if(idError != null || passwordError != null){
                     return@CommonButton
                 }
-                if(password.isEmpty()){
-                    passwordError = "비밀번호를 입력해주세요"
-                    return@CommonButton
-                }
-                login(id, password, viewModel)
+
+                val params = LoginParams(
+                    email = id,
+                    password = password
+                )
+                viewModel.emailLogin(params)
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Text(
@@ -234,18 +266,6 @@ fun LoginScreen(
             }
         }
     }
-}
-
-private fun login(
-    id: String,
-    password: String,
-    viewModel: AuthViewModel,
-) {
-    val params = LoginParams(
-        email = id,
-        password = password
-    )
-    viewModel.emailLogin(params)
 }
 
 @Composable
