@@ -49,7 +49,13 @@ fun SeniorItemFactory.fromModel(model: SeniorModel) {
 }
 
 @Composable
-fun SeniorItem(fallRiskRank: Int?,name: String, age: Int?, address: String, relation: RelationWithSenior) {
+fun SeniorItem(
+    fallRiskRank: Int?,
+    name: String,
+    age: Int?,
+    address: String,
+    relation: RelationWithSenior
+) {
     var isClicked by rememberSaveable { mutableStateOf(false) }
     Column {
         Row(
@@ -75,8 +81,7 @@ fun SeniorItem(fallRiskRank: Int?,name: String, age: Int?, address: String, rela
                         textAlign = TextAlign.Center,
                         color = Color.White
                     )
-                } ?:
-                Text(
+                } ?: Text(
                     text = "등급\n없음",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
@@ -120,7 +125,7 @@ fun SeniorItem(fallRiskRank: Int?,name: String, age: Int?, address: String, rela
                 )
             }
         }
-        if(isClicked) {
+        if (isClicked) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -128,17 +133,17 @@ fun SeniorItem(fallRiskRank: Int?,name: String, age: Int?, address: String, rela
                     .padding(
                         vertical = Sizes.INTERVAL_LARGE4,
                     )
-            ){
-                SeniorDetailMenu(title = "새로", content = "낙상 위험도 측정하기", onClick = {  })
-                SeniorDetailMenu(title = "이전", content = "낙상 위험도 보기", onClick = {  })
-                SeniorDetailMenu(title = "집 안", content = "사진찍기", onClick = {  })
+            ) {
+                SeniorDetailMenu(title = "새로", detailContent = "낙상 위험도 측정하기", onClick = { })
+                SeniorDetailMenu(title = "이전", detailContent = "낙상 위험도 보기", onClick = { })
+                SeniorDetailMenu(title = "집 안", detailContent = "사진찍기", onClick = { })
             }
         }
     }
 }
 
 @Composable
-fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
+fun SeniorDetailMenu(title: String, detailContent: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .height(120.dp)
@@ -164,7 +169,7 @@ fun SeniorDetailMenu(title: String, content:String,onClick: () -> Unit) {
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Text(
-            text = content,
+            text = detailContent,
             style = TextStyles.TITLE_MEDIUM2,
         )
 
