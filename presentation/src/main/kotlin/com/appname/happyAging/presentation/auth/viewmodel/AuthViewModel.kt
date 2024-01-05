@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.model.auth.SocialInfoModel
 import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.domain.params.auth.SignupParams
 import com.appname.happyAging.domain.params.auth.SocialLoginParams
@@ -32,6 +33,9 @@ class AuthViewModel @Inject constructor(
 
     val isLogin: StateFlow<Boolean> get() = _isLogin
     private val _isLogin = MutableStateFlow(false)
+
+    val socialInfo : StateFlow<SocialInfoModel.Progress?> get() = _socialInfo
+    private val _socialInfo = MutableStateFlow<SocialInfoModel.Progress?>(null)
     fun emailLogin(loginParams: LoginParams) {
         viewModelScope.launch {
             loginUseCase(loginParams).onSuccess {
@@ -46,37 +50,41 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             signupUseCase(signupParams).onSuccess {
                 Log.i(TAG, "회원가입 성공")
-                when(signupParams.vendor) {
-                    VendorType.KAKAO -> kakaoLogin(context)
-                    VendorType.HAPPY_AGING -> {
-                        val loginParams = LoginParams(
-                            email = signupParams.email,
-                            password = signupParams.password!!
-                        )
-                        emailLogin(loginParams)
-                    }
-                }
+                _isLogin.value = true
             }.onFailure {
                 Log.e(TAG, "회원가입 실패", it)
             }
         }
     }
 
-    fun kakaoLogin(context: Context) {
-        viewModelScope.launch{
-            val kakaoToken = handleKakaoLogin(context)
-            if(kakaoToken == null){
-                Log.e(TAG, "카카오계정으로 로그인 실패")
-                _isLogin.value = false
-                return@launch
-            }
-            val params = SocialLoginParams(
-                accessToken = kakaoToken.accessToken,
-                vendor = VendorType.KAKAO
-            )
-            socialLoginUseCase(params)
-            _isLogin.value = true
+
+    /**
+     * true이면 회원가입페이지로 이동, false이면 그대로
+     */
+    suspend fun kakaoLogin(context: Context) : Boolean{
+        val kakaoToken = handleKakaoLogin(context)
+        if(kakaoToken == null){
+            Log.e(TAG, "카카오계정으로 로그인 실패")
+            _isLogin.value = false
+            return false
         }
+        val params = SocialLoginParams(
+            accessToken = kakaoToken.accessToken,
+            vendor = VendorType.KAKAO
+        )
+        socialLoginUseCase(params).onSuccess {
+            Log.i(TAG, "카카오계정으로 로그인 성공 $it")
+            when(it){
+                is SocialInfoModel.Success -> _isLogin.value = true
+                is SocialInfoModel.Error -> _isLogin.value = false
+                is SocialInfoModel.Progress ->{
+                    _socialInfo.value = it
+                    return true
+                }
+
+            }
+        }
+        return false
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =
@@ -84,6 +92,7 @@ class AuthViewModel @Inject constructor(
             // 카카오계정으로 로그인 공통 callback 구성
             // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
             val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+                Log.d(TAG, "handleKakaoLogin: $token, $error")
                 if (error != null) {
                     continuation.resume(null)
                 } else if (token != null) {
@@ -110,6 +119,7 @@ class AuthViewModel @Inject constructor(
                     }
                 }
             } else {
+                Log.d(TAG, "카카오톡이 설치되어 있지 않음")
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             }
         }

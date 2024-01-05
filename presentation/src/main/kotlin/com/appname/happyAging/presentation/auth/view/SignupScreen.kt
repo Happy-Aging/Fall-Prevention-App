@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.auth.view
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.util.Patterns
 import androidx.activity.ComponentActivity
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,25 +50,24 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.navigateMain
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import java.util.concurrent.TimeUnit
 
 object SignupScreenFactory
 
 @Composable
 fun SignupScreenFactory.emailSignup(navController: NavController) {
+    Log.d("kakao", "SignupScreenFactory.emailSignup")
     SignupScreen(navController = navController)
 }
 
 @Composable
 fun SignupScreenFactory.kakaoSignup(navController: NavController) {
-    SignupScreen(navController = navController)
+    Log.d("kakao", "SignupScreenFactory.kakaoSignup")
+    SignupScreen(navController = navController, isKakaoSignup = true)
 }
 
 
@@ -83,16 +84,23 @@ fun signInWithPhoneAuthCredential(activity: ComponentActivity, credential: Phone
         }
 }
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun SignupScreen(
     navController: NavController,
     isKakaoSignup: Boolean = false,
-    viewModel: AuthViewModel = hiltViewModel(),
 ) {
-    val activity = LocalContext.current as? ComponentActivity
+
+    val parentEntry = remember { navController.getBackStackEntry(LoginRouter.LOGIN.routePath) }
+    val viewModel : AuthViewModel = hiltViewModel(parentEntry)
 
     val context = LocalContext.current
     val isLogin = viewModel.isLogin.collectAsState()
+    val emailFromVendor = viewModel.socialInfo.collectAsState()
+    if(isKakaoSignup){
+        Log.d("kakao", "isKakaoSignup ${emailFromVendor.value!!.email}")
+    }
+    Log.d("kakao", "isKakaoSignup $isKakaoSignup ${isLogin.value} ")
     if(isLogin.value){
         navController.navigateMain()
     }
@@ -157,64 +165,68 @@ fun SignupScreen(
                 )
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextEditField(label = "메일을 입력하세요", value = id, onValueChange = { id = it })
-            idError?.let {
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Start),
-                    text = it,
-                    style = TextStyles.CONTENT_SMALL0_STYLE.copy(
-                        color = Color.Red
+            if(!isKakaoSignup){
+
+                CustomTextEditField(label = "메일을 입력하세요", value = id, onValueChange = { id = it })
+                idError?.let {
+                    Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.Start),
+                        text = it,
+                        style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                            color = Color.Red
+                        ),
+                        textAlign = TextAlign.Left,
+                    )
+                }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CustomTextEditField(
+                    label = "비밀번호를 입력하세요",
+                    value = password,
+                    onValueChange = { password = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
+                    )
+                )
+                passwordError?.let {
+                    Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.Start),
+                        text = it,
+                        style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                            color = Color.Red
+                        ),
+                        textAlign = TextAlign.Left,
+                    )
+                }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+                CustomTextEditField(
+                    label = "비밀번호을 한 번 더 입력하세요",
+                    value = passwordCheck,
+                    onValueChange = { passwordCheck = it },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Password,
+                        imeAction = ImeAction.Next
                     ),
-                    textAlign = TextAlign.Left,
                 )
+                passwordCheckError?.let {
+                    Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.Start),
+                        text = it,
+                        style = TextStyles.CONTENT_SMALL0_STYLE.copy(
+                            color = Color.Red
+                        ),
+                        textAlign = TextAlign.Left,
+                    )
+                }
+                Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             }
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextEditField(
-                label = "비밀번호를 입력하세요",
-                value = password,
-                onValueChange = { password = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                )
-            )
-            passwordError?.let {
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Start),
-                    text = it,
-                    style = TextStyles.CONTENT_SMALL0_STYLE.copy(
-                        color = Color.Red
-                    ),
-                    textAlign = TextAlign.Left,
-                )
-            }
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
-            CustomTextEditField(
-                label = "비밀번호을 한 번 더 입력하세요",
-                value = passwordCheck,
-                onValueChange = { passwordCheck = it },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
-                    imeAction = ImeAction.Next
-                ),
-            )
-            passwordCheckError?.let {
-                Spacer(modifier = Modifier.height(Sizes.INTERVAL3))
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.Start),
-                    text = it,
-                    style = TextStyles.CONTENT_SMALL0_STYLE.copy(
-                        color = Color.Red
-                    ),
-                    textAlign = TextAlign.Left,
-                )
-            }
-            Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
+
             Box(
                 contentAlignment = Alignment.CenterEnd,
             ) {
@@ -231,34 +243,34 @@ fun SignupScreen(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(bottom = Sizes.INTERVAL1)
-                        .clickable {
-                            Log.d("phone", "인증번호 받기 $phoneNumber")
-                            val callbacks = object :
-                                PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                                override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
-
-                                override fun onVerificationFailed(e: FirebaseException) {
-                                }
-
-                                override fun onCodeSent(
-                                    returnVerificationId: String,
-                                    token: PhoneAuthProvider.ForceResendingToken
-                                ) {
-                                    Log.d("onCodeSent", "onCodeSent $returnVerificationId")
-                                    verificationId = returnVerificationId
-                                }
-                            }
-
-                            val optionsCompat = PhoneAuthOptions
-                                .newBuilder(auth)
-                                .setPhoneNumber("+8210$phoneNumber")
-                                .setTimeout(60L, TimeUnit.SECONDS)
-                                .setActivity(activity!!)
-                                .setCallbacks(callbacks)
-                                .build()
-                            PhoneAuthProvider.verifyPhoneNumber(optionsCompat)
-
-                        },
+//                        .clickable {
+//                            Log.d("phone", "인증번호 받기 $phoneNumber")
+//                            val callbacks = object :
+//                                PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+//                                override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
+//
+//                                override fun onVerificationFailed(e: FirebaseException) {
+//                                }
+//
+//                                override fun onCodeSent(
+//                                    returnVerificationId: String,
+//                                    token: PhoneAuthProvider.ForceResendingToken
+//                                ) {
+//                                    Log.d("onCodeSent", "onCodeSent $returnVerificationId")
+//                                    verificationId = returnVerificationId
+//                                }
+//                            }
+//
+//                            val optionsCompat = PhoneAuthOptions
+//                                .newBuilder(auth)
+//                                .setPhoneNumber("+8210$phoneNumber")
+//                                .setTimeout(60L, TimeUnit.SECONDS)
+//                                .setActivity(activity!!)
+//                                .setCallbacks(callbacks)
+//                                .build()
+//                            PhoneAuthProvider.verifyPhoneNumber(optionsCompat)
+//
+//                        },
                 )
             }
             phoneNumberError?.let {
@@ -287,9 +299,9 @@ fun SignupScreen(
                         .align(Alignment.CenterEnd)
                         .padding(bottom = Sizes.INTERVAL1)
                         .clickable {
-                            val credential =
-                                PhoneAuthProvider.getCredential(verificationId, smsCode)
-                            signInWithPhoneAuthCredential(activity!!, credential)
+//                            val credential =
+//                                PhoneAuthProvider.getCredential(verificationId, smsCode)
+//                            signInWithPhoneAuthCredential(activity!!, credential)
                         },
                 )
             }
@@ -340,6 +352,35 @@ fun SignupScreen(
                 } else {
                     null
                 }
+                phoneNumberError = if (phoneNumber.isEmpty()) {
+                    "휴대폰 번호를 입력해주세요"
+                } else if(!Patterns.PHONE.matcher(phoneNumber).matches()){
+                    "휴대폰 번호가 올바르지 않습니다"
+                }
+                else {
+                    null
+                }
+
+                if(isKakaoSignup){
+
+                    if (userNameError != null || phoneNumberError != null) {
+                        return@CommonButton
+                    }
+                    val signupParams = SignupParams(
+                        name = userName,
+                        email = emailFromVendor.value!!.email,
+                        password = null,
+                        phoneNumber = phoneNumber,
+                        type = userType,
+                        vendor = VendorType.KAKAO
+                    )
+                    viewModel.signup(signupParams, context)
+                    return@CommonButton
+                }
+
+
+
+
                 idError = if (id.isEmpty()) {
                     "이메일을 입력해주세요"
                 } else if(!Patterns.EMAIL_ADDRESS.matcher(id).matches()){
@@ -357,14 +398,6 @@ fun SignupScreen(
                 } else if(passwordCheck != password){
                     "비밀번호가 일치하지 않습니다"
                 } else{
-                    null
-                }
-                phoneNumberError = if (phoneNumber.isEmpty()) {
-                    "휴대폰 번호를 입력해주세요"
-                } else if(!Patterns.PHONE.matcher(phoneNumber).matches()){
-                    "휴대폰 번호가 올바르지 않습니다"
-                }
-                else {
                     null
                 }
                 if (userNameError != null || idError != null || passwordError != null || passwordCheckError != null || phoneNumberError != null) {

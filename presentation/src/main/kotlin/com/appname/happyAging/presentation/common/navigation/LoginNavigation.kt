@@ -55,10 +55,10 @@ fun NavController.go(
     when (loginRouter) {
         LoginRouter.LOGIN -> navigateLogin()
         LoginRouter.EMAIL_SIGNUP -> {
-            navigate(LoginRouter.KAKAO_SIGNUP.routePath)
+            navigate(LoginRouter.EMAIL_SIGNUP.routePath)
         }
         LoginRouter.KAKAO_SIGNUP -> {
-            navigate(LoginRouter.EMAIL_SIGNUP.routePath)
+            navigate(LoginRouter.KAKAO_SIGNUP.routePath)
         }
     }
 }
