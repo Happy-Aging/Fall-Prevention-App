@@ -20,6 +20,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun socialLogin(socialLoginParams: SocialLoginParams): SocialInfoModel {
+        return SocialInfoModel.Progress("email", socialLoginParams.vendor)
 //        val resp = apiService.loginSocial(socialLoginParams.toData())
 //        return if(resp.isSuccessful){
 //            SocialInfoModel.Success(resp.body()!!.toDomain())

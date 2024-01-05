@@ -66,27 +66,34 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun kakaoLogin(context: Context) {
-        viewModelScope.launch{
-            val kakaoToken = handleKakaoLogin(context)
-            if(kakaoToken == null){
-                Log.e(TAG, "카카오계정으로 로그인 실패")
-                _isLogin.value = false
-                return@launch
-            }
-            val params = SocialLoginParams(
-                accessToken = kakaoToken.accessToken,
-                vendor = VendorType.KAKAO
-            )
-            socialLoginUseCase(params).onSuccess {
-                when(it){
-                    is SocialInfoModel.Success -> _isLogin.value = true
-                    is SocialInfoModel.Error -> _isLogin.value = false
-                    is SocialInfoModel.Progress -> _socialInfo.value = it
 
+    /**
+     * true이면 회원가입페이지로 이동, false이면 그대로
+     */
+    suspend fun kakaoLogin(context: Context) : Boolean{
+        val kakaoToken = handleKakaoLogin(context)
+        if(kakaoToken == null){
+            Log.e(TAG, "카카오계정으로 로그인 실패")
+            _isLogin.value = false
+            return false
+        }
+        val params = SocialLoginParams(
+            accessToken = kakaoToken.accessToken,
+            vendor = VendorType.KAKAO
+        )
+        socialLoginUseCase(params).onSuccess {
+            Log.i(TAG, "카카오계정으로 로그인 성공 $it")
+            when(it){
+                is SocialInfoModel.Success -> _isLogin.value = true
+                is SocialInfoModel.Error -> _isLogin.value = false
+                is SocialInfoModel.Progress ->{
+                    _socialInfo.value = it
+                    return true
                 }
+
             }
         }
+        return false
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =
@@ -94,6 +101,7 @@ class AuthViewModel @Inject constructor(
             // 카카오계정으로 로그인 공통 callback 구성
             // 카카오톡으로 로그인 할 수 없어 카카오계정으로 로그인할 경우 사용됨
             val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+                Log.d(TAG, "handleKakaoLogin: $token, $error")
                 if (error != null) {
                     continuation.resume(null)
                 } else if (token != null) {
@@ -120,6 +128,7 @@ class AuthViewModel @Inject constructor(
                     }
                 }
             } else {
+                Log.d(TAG, "카카오톡이 설치되어 있지 않음")
                 UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
             }
         }
