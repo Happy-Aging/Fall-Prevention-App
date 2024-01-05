@@ -2,10 +2,12 @@ package com.appname.happyAging.domain.params.senior
 
 import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.model.senior.SeniorModel
+import java.time.LocalDate
 
 class CreateSeniorParams(
     val name: String,
     val address: String,
+    val birth: LocalDate,
     val phoneNumber: String?,
     val relation: RelationWithSenior,
 )
@@ -17,7 +19,7 @@ fun CreateSeniorParams.toModel(id: Long): SeniorModel {
     return SeniorModel(
         id = id,
         name = name,
-        age = null,
+        birth = birth,
         address = address,
         phoneNumber = phoneNumber,
         relation = relation,

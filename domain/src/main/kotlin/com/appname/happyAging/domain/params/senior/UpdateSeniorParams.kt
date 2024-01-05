@@ -17,7 +17,7 @@ fun SeniorModel.update(updateSeniorParams: UpdateSeniorParams): SeniorModel {
     return SeniorModel(
         id = updateSeniorParams.id,
         name = updateSeniorParams.name,
-        age = this.age,
+        birth = this.birth,
         address = updateSeniorParams.address,
         phoneNumber = this.phoneNumber,
         relation = updateSeniorParams.relation,

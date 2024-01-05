@@ -37,6 +37,7 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
+import java.time.LocalDate
 
 
 object SeniorItemFactory
@@ -46,7 +47,7 @@ fun SeniorItemFactory.fromModel(model: SeniorModel, onEditClicked: () -> Unit = 
     SeniorItem(
         fallRiskRank = model.fallRiskRank,
         name = model.name,
-        age = model.age,
+        age = model.birth?.let { LocalDate.now().year - it.year },
         address = model.address,
         relation = model.relation,
         onEditClicked = onEditClicked

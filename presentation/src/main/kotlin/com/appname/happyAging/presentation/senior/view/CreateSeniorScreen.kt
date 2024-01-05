@@ -37,6 +37,7 @@ import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
+import java.time.LocalDate
 
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -56,9 +57,10 @@ fun CreateSeniorScreen(
     ) {
         var seniorName by rememberSaveable { mutableStateOf("") }
         var relation by rememberSaveable { mutableStateOf(RelationWithSenior.SELF) }
-        var address by rememberSaveable { mutableStateOf("") }
+        var address : String? by rememberSaveable { mutableStateOf(null) }
         var detailAddress by rememberSaveable { mutableStateOf("") }
         var seniorPhoneNumber by rememberSaveable { mutableStateOf("") }
+        var birth by rememberSaveable { mutableStateOf("") }
         Column(
             modifier = Modifier.padding(
                 horizontal = Sizes.DEFAULT_PADDING,
@@ -74,9 +76,9 @@ fun CreateSeniorScreen(
             )
             CustomTextEditField(label = "이름을 입력하세요", value = seniorName , onValueChange = {seniorName = it} )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM2))
-            CustomTextEditField(label = "거주지를 입력하세요", value = address , onValueChange = {address = it} )
+            CustomTextEditField(label = "거주지를 입력하세요", value = address?: "" , onValueChange = {address = it} )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM2))
-            CustomTextEditField(label = "상세주소", value = detailAddress , onValueChange = {detailAddress = it} )
+            CustomTextEditField(label = "출생년도를 입력하세요", value = birth , onValueChange = {birth = it} )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM2))
             CustomTextEditField(
                 label = "휴대폰 번호를 입력하세요(선택사항)",
@@ -117,9 +119,15 @@ fun CreateSeniorScreen(
             CommonButton(
                 text = "생성하기",
             ) {
+                if(seniorName.isEmpty() || address.isNullOrEmpty() || birth.isEmpty()) {
+                    return@CommonButton
+                }
+                val birthDate = LocalDate.of(birth.toInt(), 1, 1)
+                val fullAddress = "$address $detailAddress"
                 val params = CreateSeniorParams(
                     name = seniorName,
-                    address = address,
+                    address = fullAddress,
+                    birth = birthDate,
                     phoneNumber = seniorPhoneNumber.ifEmpty { null },
                     relation = relation,
                     )
