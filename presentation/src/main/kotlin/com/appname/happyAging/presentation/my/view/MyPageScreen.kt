@@ -16,6 +16,8 @@ import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
+import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
+import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.navigation.navigateLogin
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
@@ -33,7 +35,11 @@ fun MyPageScreen(
         ) {
             TextRow(text = "로그아웃") {
                 viewModel.logout()
-                rootNavController.navigateLogin()
+                rootNavController.navigate(LOGIN_GRAPH_ROUTE_PATTERN){
+                    popUpTo(MAIN_GRAPH_ROUTE_PATTERN){
+                        inclusive = true
+                    }
+                }
             }
             Divider()
             TextRow(text = "정보수정") {

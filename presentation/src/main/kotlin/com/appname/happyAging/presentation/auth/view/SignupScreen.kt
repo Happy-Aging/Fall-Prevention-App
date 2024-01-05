@@ -27,6 +27,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,11 +51,13 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
-import com.appname.happyAging.presentation.common.navigation.navigateMain
+import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
 import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 object SignupScreenFactory
 
@@ -95,14 +98,10 @@ fun SignupScreen(
     val viewModel : AuthViewModel = hiltViewModel(parentEntry)
 
     val context = LocalContext.current
-    val isLogin = viewModel.isLogin.collectAsState()
+
     val emailFromVendor = viewModel.socialInfo.collectAsState()
     if(isKakaoSignup){
         Log.d("kakao", "isKakaoSignup ${emailFromVendor.value!!.email}")
-    }
-    Log.d("kakao", "isKakaoSignup $isKakaoSignup ${isLogin.value} ")
-    if(isLogin.value){
-        navController.navigateMain()
     }
 
     var userName by rememberSaveable { mutableStateOf("") }
@@ -120,7 +119,7 @@ fun SignupScreen(
     var passwordCheckError: String? by rememberSaveable { mutableStateOf(null) }
     var phoneNumberError: String? by rememberSaveable { mutableStateOf(null) }
 
-
+    val coroutineComposeScope = rememberCoroutineScope()
     DefaultLayout(
         title = "회원가입",
         actions = {
@@ -374,7 +373,16 @@ fun SignupScreen(
                         type = userType,
                         vendor = VendorType.KAKAO
                     )
-                    viewModel.signup(signupParams, context)
+                    coroutineComposeScope.launch{
+                        val resp = viewModel.signup(signupParams, context)
+                        if(resp){
+                            navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                                popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
                     return@CommonButton
                 }
 
@@ -412,7 +420,16 @@ fun SignupScreen(
                     type = userType,
                     vendor = VendorType.HAPPY_AGING
                 )
-                viewModel.signup(signupParams, context)
+                coroutineComposeScope.launch{
+                    val resp = viewModel.signup(signupParams, context)
+                    if(resp){
+                        navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                            popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
         }

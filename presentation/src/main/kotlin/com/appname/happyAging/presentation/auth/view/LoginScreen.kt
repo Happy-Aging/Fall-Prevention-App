@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,9 +50,10 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
+import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.go
-import com.appname.happyAging.presentation.common.navigation.navigateMain
 import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
 import kotlinx.coroutines.launch
 
@@ -64,12 +64,9 @@ fun LoginScreen(
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val isLogin = viewModel.isLogin.collectAsState()
-    if(isLogin.value){
-        navController.navigateMain()
-    }
 
-    val coroutineKakaoScope = rememberCoroutineScope()
+
+    val coroutineComposeScope = rememberCoroutineScope()
     DefaultLayout(
         title = LoginRouter.LOGIN.korean,
     ) {
@@ -155,7 +152,16 @@ fun LoginScreen(
                                 email = id,
                                 password = password
                             )
-                            viewModel.emailLogin(params)
+                            coroutineComposeScope.launch {
+                                val resp = viewModel.emailLogin(params)
+                                if(resp){
+                                    navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                                        popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                                            inclusive = true
+                                        }
+                                    }
+                                }
+                            }
                         }
                     ),
                     isError = passwordError != null,
@@ -218,7 +224,16 @@ fun LoginScreen(
                     email = id,
                     password = password
                 )
-                viewModel.emailLogin(params)
+                coroutineComposeScope.launch {
+                    val resp = viewModel.emailLogin(params)
+                    if(resp){
+                        navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                            popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL1))
             Text(
@@ -266,7 +281,7 @@ fun LoginScreen(
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
             KakaoButton(text = "카카오 로그인") {
-                coroutineKakaoScope.launch {
+                coroutineComposeScope.launch {
                     val resp = viewModel.kakaoLogin(context)
                     if(resp){
                         navController.go(LoginRouter.KAKAO_SIGNUP)

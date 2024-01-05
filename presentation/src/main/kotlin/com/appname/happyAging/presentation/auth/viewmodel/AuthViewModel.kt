@@ -3,7 +3,6 @@ package com.appname.happyAging.presentation.auth.viewmodel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.model.auth.SocialInfoModel
 import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.domain.params.auth.SignupParams
@@ -19,7 +18,6 @@ import com.kakao.sdk.user.UserApiClient
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -31,30 +29,26 @@ class AuthViewModel @Inject constructor(
     private val signupUseCase: SignupUseCase,
 ) : ViewModel() {
 
-    val isLogin: StateFlow<Boolean> get() = _isLogin
-    private val _isLogin = MutableStateFlow(false)
 
     val socialInfo : StateFlow<SocialInfoModel.Progress?> get() = _socialInfo
     private val _socialInfo = MutableStateFlow<SocialInfoModel.Progress?>(null)
-    fun emailLogin(loginParams: LoginParams) {
-        viewModelScope.launch {
-            loginUseCase(loginParams).onSuccess {
-                _isLogin.value = true
-            }.onFailure {
-                Log.e(TAG, "로그인 실패", it)
-            }
+    suspend fun emailLogin(loginParams: LoginParams) : Boolean{
+        loginUseCase(loginParams).onSuccess {
+            return true
+        }.onFailure {
+            Log.e(TAG, "로그인 실패", it)
         }
+        return false
     }
 
-    fun signup(signupParams: SignupParams, context: Context) {
-        viewModelScope.launch {
-            signupUseCase(signupParams).onSuccess {
-                Log.i(TAG, "회원가입 성공")
-                _isLogin.value = true
-            }.onFailure {
-                Log.e(TAG, "회원가입 실패", it)
-            }
+    suspend fun signup(signupParams: SignupParams, context: Context) : Boolean{
+        signupUseCase(signupParams).onSuccess {
+            Log.i(TAG, "회원가입 성공")
+            return true
+        }.onFailure {
+            Log.e(TAG, "회원가입 실패", it)
         }
+        return false
     }
 
 
@@ -65,7 +59,6 @@ class AuthViewModel @Inject constructor(
         val kakaoToken = handleKakaoLogin(context)
         if(kakaoToken == null){
             Log.e(TAG, "카카오계정으로 로그인 실패")
-            _isLogin.value = false
             return false
         }
         val params = SocialLoginParams(
@@ -74,14 +67,9 @@ class AuthViewModel @Inject constructor(
         )
         socialLoginUseCase(params).onSuccess {
             Log.i(TAG, "카카오계정으로 로그인 성공 $it")
-            when(it){
-                is SocialInfoModel.Success -> _isLogin.value = true
-                is SocialInfoModel.Error -> _isLogin.value = false
-                is SocialInfoModel.Progress ->{
-                    _socialInfo.value = it
-                    return true
-                }
-
+            if (it is SocialInfoModel.Progress){
+                _socialInfo.value = it
+                return true
             }
         }
         return false
