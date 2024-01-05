@@ -2,6 +2,7 @@ package com.appname.happyAging.data.repository.auth
 
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.domain.model.auth.JwtToken
+import com.appname.happyAging.domain.model.auth.SocialInfoModel
 import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.domain.params.auth.SignupParams
 import com.appname.happyAging.domain.params.auth.SocialLoginParams
@@ -18,9 +19,21 @@ class AuthRepositoryImpl @Inject constructor(
         return JwtToken("accessToken", "refreshToken")
     }
 
-    override suspend fun socialLogin(socialLoginParams: SocialLoginParams): JwtToken {
-        //apiService.loginSocial(socialLoginParams.toData())
-        return JwtToken("acc","ref")
+    override suspend fun socialLogin(socialLoginParams: SocialLoginParams): SocialInfoModel {
+//        val resp = apiService.loginSocial(socialLoginParams.toData())
+//        return if(resp.isSuccessful){
+//            SocialInfoModel.Success(resp.body()!!.toDomain())
+//        }else if (resp.code() == 401){
+//            val errorBody = resp.errorBody()?.string()
+//            val gson = Gson()
+//            val responseJson = gson.fromJson(errorBody, Map::class.java)
+//            val email = responseJson["email"].toString()
+//            val vendor = VendorType.valueOf(responseJson["vendor"].toString())
+//            SocialInfoModel.Progress(email, vendor)
+//        }else{
+//            SocialInfoModel.Error(resp.message())
+//        }
+        return SocialInfoModel.Success(JwtToken("accessToken", "refreshToken"))
     }
 
     override suspend fun signup(signupParams: SignupParams) {

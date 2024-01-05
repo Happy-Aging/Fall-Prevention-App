@@ -9,6 +9,7 @@ import com.appname.happyAging.data.dto.senior.request.UpdateSeniorRequest
 import com.appname.happyAging.data.dto.senior.response.SeniorDto
 import com.appname.happyAging.data.dto.user.request.UpdateUserRequest
 import com.appname.happyAging.data.dto.user.response.UserResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -25,7 +26,7 @@ interface ApiService {
 
     @POST("/auth/login/social")
     @Headers("Auth: false")
-    suspend fun loginSocial(@Body request: SocialLoginRequest): TokenResponse
+    suspend fun loginSocial(@Body request: SocialLoginRequest): Response<TokenResponse>
 
     @POST("/auth/join")
     @Headers("Auth: false")

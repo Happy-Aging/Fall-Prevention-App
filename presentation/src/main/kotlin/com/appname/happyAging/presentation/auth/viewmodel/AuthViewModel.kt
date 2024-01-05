@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.model.auth.SocialInfoModel
 import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.domain.params.auth.SignupParams
 import com.appname.happyAging.domain.params.auth.SocialLoginParams
@@ -32,6 +33,9 @@ class AuthViewModel @Inject constructor(
 
     val isLogin: StateFlow<Boolean> get() = _isLogin
     private val _isLogin = MutableStateFlow(false)
+
+    val socialInfo : StateFlow<SocialInfoModel.Progress?> get() = _socialInfo
+    private val _socialInfo = MutableStateFlow<SocialInfoModel.Progress?>(null)
     fun emailLogin(loginParams: LoginParams) {
         viewModelScope.launch {
             loginUseCase(loginParams).onSuccess {
@@ -74,8 +78,14 @@ class AuthViewModel @Inject constructor(
                 accessToken = kakaoToken.accessToken,
                 vendor = VendorType.KAKAO
             )
-            socialLoginUseCase(params)
-            _isLogin.value = true
+            socialLoginUseCase(params).onSuccess {
+                when(it){
+                    is SocialInfoModel.Success -> _isLogin.value = true
+                    is SocialInfoModel.Error -> _isLogin.value = false
+                    is SocialInfoModel.Progress -> _socialInfo.value = it
+
+                }
+            }
         }
     }
 
