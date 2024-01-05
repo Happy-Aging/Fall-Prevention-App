@@ -54,8 +54,6 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
 
     debugImplementation(libs.bundles.android.compose.debug)
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
 
     implementation("com.kakao.sdk:v2-user:2.19.0")
     implementation(libs.compose.webview)

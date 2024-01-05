@@ -3,7 +3,6 @@ package com.appname.happyAging.presentation.auth.view
 import android.annotation.SuppressLint
 import android.util.Log
 import android.util.Patterns
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,9 +53,6 @@ import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
 import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 object SignupScreenFactory
@@ -74,18 +70,6 @@ fun SignupScreenFactory.kakaoSignup(navController: NavController) {
 }
 
 
-val auth = Firebase.auth
-var verificationId = ""
-fun signInWithPhoneAuthCredential(activity: ComponentActivity, credential: PhoneAuthCredential) {
-    auth.signInWithCredential(credential)
-        .addOnCompleteListener(activity) { task ->
-            if (task.isSuccessful) {
-                Log.d("signInWithCredential", "signInWithCredential:success")
-            } else {
-                Log.d("signInWithCredential", "signInWithCredential:failure")
-            }
-        }
-}
 
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
@@ -242,34 +226,9 @@ fun SignupScreen(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(bottom = Sizes.INTERVAL1)
-//                        .clickable {
-//                            Log.d("phone", "인증번호 받기 $phoneNumber")
-//                            val callbacks = object :
-//                                PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-//                                override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
-//
-//                                override fun onVerificationFailed(e: FirebaseException) {
-//                                }
-//
-//                                override fun onCodeSent(
-//                                    returnVerificationId: String,
-//                                    token: PhoneAuthProvider.ForceResendingToken
-//                                ) {
-//                                    Log.d("onCodeSent", "onCodeSent $returnVerificationId")
-//                                    verificationId = returnVerificationId
-//                                }
-//                            }
-//
-//                            val optionsCompat = PhoneAuthOptions
-//                                .newBuilder(auth)
-//                                .setPhoneNumber("+8210$phoneNumber")
-//                                .setTimeout(60L, TimeUnit.SECONDS)
-//                                .setActivity(activity!!)
-//                                .setCallbacks(callbacks)
-//                                .build()
-//                            PhoneAuthProvider.verifyPhoneNumber(optionsCompat)
-//
-//                        },
+                        .clickable {
+
+                        },
                 )
             }
             phoneNumberError?.let {
