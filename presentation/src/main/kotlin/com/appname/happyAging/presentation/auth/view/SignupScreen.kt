@@ -3,7 +3,6 @@ package com.appname.happyAging.presentation.auth.view
 import android.annotation.SuppressLint
 import android.util.Log
 import android.util.Patterns
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,11 +50,10 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
+import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
-import com.appname.happyAging.presentation.common.navigation.navigateMain
-import com.google.firebase.auth.PhoneAuthCredential
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
+import kotlinx.coroutines.launch
 
 object SignupScreenFactory
 
@@ -71,18 +70,6 @@ fun SignupScreenFactory.kakaoSignup(navController: NavController) {
 }
 
 
-val auth = Firebase.auth
-var verificationId = ""
-fun signInWithPhoneAuthCredential(activity: ComponentActivity, credential: PhoneAuthCredential) {
-    auth.signInWithCredential(credential)
-        .addOnCompleteListener(activity) { task ->
-            if (task.isSuccessful) {
-                Log.d("signInWithCredential", "signInWithCredential:success")
-            } else {
-                Log.d("signInWithCredential", "signInWithCredential:failure")
-            }
-        }
-}
 
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
@@ -95,14 +82,10 @@ fun SignupScreen(
     val viewModel : AuthViewModel = hiltViewModel(parentEntry)
 
     val context = LocalContext.current
-    val isLogin = viewModel.isLogin.collectAsState()
+
     val emailFromVendor = viewModel.socialInfo.collectAsState()
     if(isKakaoSignup){
         Log.d("kakao", "isKakaoSignup ${emailFromVendor.value!!.email}")
-    }
-    Log.d("kakao", "isKakaoSignup $isKakaoSignup ${isLogin.value} ")
-    if(isLogin.value){
-        navController.navigateMain()
     }
 
     var userName by rememberSaveable { mutableStateOf("") }
@@ -120,7 +103,7 @@ fun SignupScreen(
     var passwordCheckError: String? by rememberSaveable { mutableStateOf(null) }
     var phoneNumberError: String? by rememberSaveable { mutableStateOf(null) }
 
-
+    val coroutineComposeScope = rememberCoroutineScope()
     DefaultLayout(
         title = "회원가입",
         actions = {
@@ -243,34 +226,9 @@ fun SignupScreen(
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .padding(bottom = Sizes.INTERVAL1)
-//                        .clickable {
-//                            Log.d("phone", "인증번호 받기 $phoneNumber")
-//                            val callbacks = object :
-//                                PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-//                                override fun onVerificationCompleted(credential: PhoneAuthCredential) {}
-//
-//                                override fun onVerificationFailed(e: FirebaseException) {
-//                                }
-//
-//                                override fun onCodeSent(
-//                                    returnVerificationId: String,
-//                                    token: PhoneAuthProvider.ForceResendingToken
-//                                ) {
-//                                    Log.d("onCodeSent", "onCodeSent $returnVerificationId")
-//                                    verificationId = returnVerificationId
-//                                }
-//                            }
-//
-//                            val optionsCompat = PhoneAuthOptions
-//                                .newBuilder(auth)
-//                                .setPhoneNumber("+8210$phoneNumber")
-//                                .setTimeout(60L, TimeUnit.SECONDS)
-//                                .setActivity(activity!!)
-//                                .setCallbacks(callbacks)
-//                                .build()
-//                            PhoneAuthProvider.verifyPhoneNumber(optionsCompat)
-//
-//                        },
+                        .clickable {
+
+                        },
                 )
             }
             phoneNumberError?.let {
@@ -374,7 +332,16 @@ fun SignupScreen(
                         type = userType,
                         vendor = VendorType.KAKAO
                     )
-                    viewModel.signup(signupParams, context)
+                    coroutineComposeScope.launch{
+                        val resp = viewModel.signup(signupParams, context)
+                        if(resp){
+                            navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                                popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                                    inclusive = true
+                                }
+                            }
+                        }
+                    }
                     return@CommonButton
                 }
 
@@ -412,7 +379,16 @@ fun SignupScreen(
                     type = userType,
                     vendor = VendorType.HAPPY_AGING
                 )
-                viewModel.signup(signupParams, context)
+                coroutineComposeScope.launch{
+                    val resp = viewModel.signup(signupParams, context)
+                    if(resp){
+                        navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                            popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
         }

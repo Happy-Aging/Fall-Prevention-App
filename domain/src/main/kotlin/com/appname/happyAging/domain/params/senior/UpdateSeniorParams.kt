@@ -2,10 +2,12 @@ package com.appname.happyAging.domain.params.senior
 
 import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.model.senior.SeniorModel
+import java.time.LocalDate
 
 class UpdateSeniorParams(
     val id: Long,
     val name: String,
+    val birth: LocalDate,
     val address: String,
     val relation: RelationWithSenior,
 )
@@ -17,7 +19,7 @@ fun SeniorModel.update(updateSeniorParams: UpdateSeniorParams): SeniorModel {
     return SeniorModel(
         id = updateSeniorParams.id,
         name = updateSeniorParams.name,
-        age = this.age,
+        birth = updateSeniorParams.birth,
         address = updateSeniorParams.address,
         phoneNumber = this.phoneNumber,
         relation = updateSeniorParams.relation,
