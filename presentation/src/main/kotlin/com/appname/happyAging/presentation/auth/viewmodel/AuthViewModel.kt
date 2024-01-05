@@ -50,16 +50,7 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             signupUseCase(signupParams).onSuccess {
                 Log.i(TAG, "회원가입 성공")
-                when(signupParams.vendor) {
-                    VendorType.KAKAO -> kakaoLogin(context)
-                    VendorType.HAPPY_AGING -> {
-                        val loginParams = LoginParams(
-                            email = signupParams.email,
-                            password = signupParams.password!!
-                        )
-                        emailLogin(loginParams)
-                    }
-                }
+                _isLogin.value = true
             }.onFailure {
                 Log.e(TAG, "회원가입 실패", it)
             }

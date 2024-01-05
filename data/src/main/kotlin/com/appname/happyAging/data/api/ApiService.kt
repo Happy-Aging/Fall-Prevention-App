@@ -30,7 +30,7 @@ interface ApiService {
 
     @POST("/auth/join")
     @Headers("Auth: false")
-    suspend fun join(@Body request: SignupRequest)
+    suspend fun signup(@Body request: SignupRequest) : TokenResponse
 
 
     //--------------------- User ---------------------//

@@ -37,7 +37,8 @@ class AuthRepositoryImpl @Inject constructor(
         return SocialInfoModel.Success(JwtToken("accessToken", "refreshToken"))
     }
 
-    override suspend fun signup(signupParams: SignupParams) {
+    override suspend fun signup(signupParams: SignupParams) : JwtToken{
         //apiService.join(signupParams.toData())
+        return JwtToken("a","b")
     }
 }

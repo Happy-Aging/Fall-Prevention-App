@@ -9,5 +9,5 @@ import com.appname.happyAging.domain.params.auth.SocialLoginParams
 interface AuthRepository {
     suspend fun login(loginParams: LoginParams) : JwtToken
     suspend fun socialLogin(socialLoginParams: SocialLoginParams) : SocialInfoModel
-    suspend fun signup(signupParams: SignupParams)
+    suspend fun signup(signupParams: SignupParams) : JwtToken
 }
