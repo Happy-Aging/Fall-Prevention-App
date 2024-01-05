@@ -10,7 +10,7 @@ class SignupParams(
 )
 
 enum class UserType(val english: String, val korean: String) {
-    INDIVIDUAL("individual", "일반"),
+    USER("user", "일반"),
     MANAGER("careManager", "돌봄매니저"),
 }
 

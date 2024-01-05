@@ -61,7 +61,7 @@ fun EditInfoScreen(
         ) {
             var name by rememberSaveable { mutableStateOf("") }
             var phoneNumber by rememberSaveable { mutableStateOf("") }
-            var userType by rememberSaveable { mutableStateOf(UserType.INDIVIDUAL) }
+            var userType by rememberSaveable { mutableStateOf(UserType.USER) }
             var password : String? by rememberSaveable { mutableStateOf(null) }
             when(state.value){
                 is UiState.Error -> TODO()
@@ -72,7 +72,7 @@ fun EditInfoScreen(
                         name = user.name
                         phoneNumber = user.phoneNumber
                         userType = user.userType
-                        password = if (user.userType == UserType.INDIVIDUAL) "" else null
+                        password = if (user.userType == UserType.USER) "" else null
                     }
                 }
             }
@@ -102,9 +102,9 @@ fun EditInfoScreen(
             ) {
                 RadioButton(
                     modifier = Modifier.size(12.dp),
-                    selected = userType == UserType.INDIVIDUAL,
+                    selected = userType == UserType.USER,
                     onClick = {
-                          userType = UserType.INDIVIDUAL
+                          userType = UserType.USER
                     },
                     colors = RadioButtonDefaults.colors(
                         selectedColor = Colors.PRIMARY_ORANGE,

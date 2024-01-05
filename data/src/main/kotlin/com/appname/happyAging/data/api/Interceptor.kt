@@ -1,6 +1,7 @@
 package com.appname.happyAging.data.api
 
 import com.appname.happyAging.data.api.ApiConstants.BASE_URL
+import com.appname.happyAging.domain.model.auth.JwtToken
 import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import com.google.gson.Gson
 import kotlinx.coroutines.runBlocking
@@ -26,7 +27,7 @@ class AuthInterceptor @Inject constructor(
             jwtTokenRepository.getJwtToken()!!.refreshToken
         }
         val refreshRequest = Request.Builder()
-            .url("$BASE_URL/reissue")
+            .url("$BASE_URL/auth/refreshToken")
             .post("".toRequestBody())
             .addHeader("authorization", "Bearer ${refreshToken}")
             .build()
@@ -35,8 +36,13 @@ class AuthInterceptor @Inject constructor(
             val gson = Gson()
             val refreshResponseJson = gson.fromJson(refreshResponse.body?.string(), Map::class.java)
             val newAccessToken = refreshResponseJson["accessToken"].toString()
+            val newRefreshToken = refreshResponseJson["refreshToken"].toString()
             runBlocking {
-                jwtTokenRepository.saveAccessToken(newAccessToken)
+                val token = JwtToken(
+                    accessToken = newAccessToken,
+                    refreshToken = newRefreshToken
+                )
+                jwtTokenRepository.saveJwtToken(token)
             }
             val newRequest = originRequest.newBuilder()
                 .removeHeader("Authorization")

@@ -13,7 +13,7 @@ class UserModel(
         fun fixture(
             name: String = "홍길동",
             phoneNumber: String = "010-1234-5678",
-            userType: UserType = UserType.INDIVIDUAL,
+            userType: UserType = UserType.USER,
             vendor: VendorType = VendorType.KAKAO,
         ) = UserModel(
             name = name,

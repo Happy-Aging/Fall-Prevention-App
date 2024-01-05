@@ -95,7 +95,7 @@ fun SignupScreen(
     var phoneNumber by rememberSaveable { mutableStateOf("") }
 
     var smsCode by rememberSaveable { mutableStateOf("") }
-    var userType by rememberSaveable { mutableStateOf(UserType.INDIVIDUAL) }
+    var userType by rememberSaveable { mutableStateOf(UserType.USER) }
 
     var userNameError: String? by rememberSaveable { mutableStateOf(null) }
     var idError: String? by rememberSaveable { mutableStateOf(null) }

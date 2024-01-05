@@ -3,6 +3,7 @@ package com.appname.happyAging.data.api
 import com.appname.happyAging.data.dto.auth.request.LoginRequest
 import com.appname.happyAging.data.dto.auth.request.SignupRequest
 import com.appname.happyAging.data.dto.auth.request.SocialLoginRequest
+import com.appname.happyAging.data.dto.auth.request.SocialSignupRequest
 import com.appname.happyAging.data.dto.auth.response.TokenResponse
 import com.appname.happyAging.data.dto.senior.request.CreateSeniorRequest
 import com.appname.happyAging.data.dto.senior.request.UpdateSeniorRequest
@@ -32,6 +33,9 @@ interface ApiService {
     @Headers("Auth: false")
     suspend fun signup(@Body request: SignupRequest) : TokenResponse
 
+    @POST("/auth/jogin/social")
+    @Headers("Auth: false")
+    suspend fun socialSignup(@Body request: SocialSignupRequest): TokenResponse
 
     //--------------------- User ---------------------//
     @GET("/user")
