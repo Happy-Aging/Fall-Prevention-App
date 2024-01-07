@@ -8,25 +8,20 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
-import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
-import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
-import com.appname.happyAging.presentation.common.navigation.Router
-import com.appname.happyAging.presentation.common.navigation.navigateLogin
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
 import com.appname.happyAging.presentation.my.viewmodel.UserViewModel
 
 @Composable
 fun MyPageScreen(
-    navController: NavController,
-    rootNavController: NavController,
+    onLogoutClick : () -> Unit = {},
+    onEditUserInfoClick : () -> Unit = {},
+    onDeleteUserClick : () -> Unit = {},
     viewModel : UserViewModel = hiltViewModel(),
 ){
     DefaultLayout(title = BottomNavRouter.PROFILE.korean) {
@@ -35,16 +30,13 @@ fun MyPageScreen(
         ) {
             TextRow(text = "로그아웃") {
                 viewModel.logout()
-                rootNavController.navigate(LOGIN_GRAPH_ROUTE_PATTERN){
-                    popUpTo(MAIN_GRAPH_ROUTE_PATTERN){
-                        inclusive = true
-                    }
-                }
+                onLogoutClick()
             }
             Divider()
-            TextRow(text = "정보수정") {
-                navController.navigate(Router.EDIT_INFO.routePath)
-            }
+            TextRow(
+                text = "정보수정",
+                onClick = onEditUserInfoClick
+            )
             Divider()
             TextRow(text = "개인정보 이용약관") {
                 //todo
@@ -52,7 +44,7 @@ fun MyPageScreen(
             Divider()
             TextRow(text = "회원 탈퇴") {
                 viewModel.deleteUser()
-                rootNavController.navigateLogin()
+                onDeleteUserClick()
             }
             Divider()
         }
@@ -80,6 +72,5 @@ fun TextRow(text: String, onClick: () -> Unit){
 @Preview
 @Composable
 fun MyPageScreenPreview(){
-    val navController = NavController(LocalContext.current)
-    MyPageScreen(navController,navController)
+    MyPageScreen()
 }

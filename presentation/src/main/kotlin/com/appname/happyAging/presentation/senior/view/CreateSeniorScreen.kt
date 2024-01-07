@@ -1,6 +1,5 @@
 package com.appname.happyAging.presentation.senior.view
 
-import android.annotation.SuppressLint
 import android.util.Patterns
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,19 +17,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 import com.appname.happyAging.presentation.auth.view.AddressWebView
@@ -41,24 +37,21 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
-import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
 import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
 import java.time.LocalDate
 
 
-@SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun CreateSeniorScreen(
-    navController: NavController,
+    backAction : () -> Unit = {},
+    seniorViewModel: SeniorViewModel = hiltViewModel(),
 ) {
-    val parentEntry = remember { navController.getBackStackEntry(BottomNavRouter.SENIOR_LIST.routePath) }
-    val viewModel : SeniorViewModel = hiltViewModel(parentEntry)
     DefaultLayout(
         title = Router.SENIOR_CREATE.korean,
         actions = {
-            IconButton(onClick = { navController.popBackStack()}) {
+            IconButton(onClick = backAction) {
                 Icon(Icons.Default.Close, contentDescription = "취소")
             }
         }
@@ -272,8 +265,8 @@ fun CreateSeniorScreen(
                         phoneNumber = seniorPhoneNumber.ifEmpty { null },
                         relation = relation,
                     )
-                    viewModel.createSenior(params)
-                    navController.popBackStack()
+                    seniorViewModel.createSenior(params)
+                    backAction()
                 }
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             }
@@ -292,5 +285,5 @@ fun CreateSeniorScreen(
 @Preview
 @Composable
 fun PreviewCreateSeniorScreen() {
-    CreateSeniorScreen(navController = NavController(LocalContext.current))
+    CreateSeniorScreen()
 }

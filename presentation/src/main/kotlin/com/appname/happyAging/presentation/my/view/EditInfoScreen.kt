@@ -18,18 +18,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.appname.happyAging.domain.params.auth.UserType
 import com.appname.happyAging.domain.params.user.UpdateUserParams
 import com.appname.happyAging.presentation.common.component.CommonButton
@@ -38,7 +35,6 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
-import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.state.UiState
 import com.appname.happyAging.presentation.my.viewmodel.UserViewModel
@@ -46,11 +42,10 @@ import com.appname.happyAging.presentation.my.viewmodel.UserViewModel
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun EditInfoScreen(
-    navController: NavController,
+    onSaveButtonClick : () -> Unit = {},
+    userViewModel: UserViewModel = hiltViewModel()
 ){
-    val parentEntry = remember { navController.getBackStackEntry(BottomNavRouter.PROFILE.routePath) }
-    val viewModel : UserViewModel = hiltViewModel(parentEntry)
-    val state = viewModel.user.collectAsState()
+    val state = userViewModel.user.collectAsState()
     DefaultLayout(
         title = Router.EDIT_INFO.korean,
     ) {
@@ -134,8 +129,9 @@ fun EditInfoScreen(
                     userType = userType,
                     password = password,
                 )
-                viewModel.updateUser(updateUserParams)
-                navController.popBackStack()
+                userViewModel.updateUser(updateUserParams)
+                onSaveButtonClick()
+
             }
         }
     }
@@ -144,5 +140,5 @@ fun EditInfoScreen(
 @Composable
 @Preview
 fun EditInfoScreenPreview(){
-    EditInfoScreen(navController = NavController(LocalContext.current))
+    EditInfoScreen()
 }

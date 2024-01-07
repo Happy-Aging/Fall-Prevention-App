@@ -16,17 +16,14 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
-import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.state.UiState
 import com.appname.happyAging.presentation.senior.component.SeniorItemFactory
 import com.appname.happyAging.presentation.senior.component.fromModel
@@ -34,7 +31,8 @@ import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
 
 @Composable
 fun SeniorScreen(
-    navController: NavController,
+    onSeniorEditClick: (Long) -> Unit = {},
+    onAddSeniorClick: () -> Unit = {},
     viewModel : SeniorViewModel = hiltViewModel(),
 ) {
     val seniorList = viewModel.senior.collectAsState()
@@ -52,12 +50,13 @@ fun SeniorScreen(
                 }
                 is UiState.Success -> {
                     (seniorList.value as UiState.Success<List<SeniorModel>>).data.forEach{ person ->
-                        SeniorItemFactory.fromModel(person){
-                            navController.navigate("${Router.SENIOR_EDIT.routePath}/${person.id}")
+                        SeniorItemFactory.fromModel(
+                            person
+                        ) {
+                            onSeniorEditClick(person.id)
                         }
                         Divider()
                     }
-                    // TODO : 성공했을때
                 }
                 is UiState.Error -> {
                     // TODO : 에러났을때
@@ -84,10 +83,9 @@ fun SeniorScreen(
                                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                             )
                         )
-                    }
-            ) {
-                navController.navigate(Router.SENIOR_CREATE.routePath)
-            }
+                    },
+                onClick = onAddSeniorClick,
+            )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
         }
 
@@ -98,5 +96,5 @@ fun SeniorScreen(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun SeniorScreenPreview() {
-    SeniorScreen(navController = NavController(LocalContext.current))
+    SeniorScreen()
 }

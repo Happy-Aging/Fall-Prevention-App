@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import com.appname.happyAging.domain.model.auth.SocialInfoModel
 import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.presentation.R
 import com.appname.happyAging.presentation.auth.component.KakaoButton
@@ -50,17 +50,16 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
-import com.appname.happyAging.presentation.common.navigation.LOGIN_GRAPH_ROUTE_PATTERN
 import com.appname.happyAging.presentation.common.navigation.LoginRouter
-import com.appname.happyAging.presentation.common.navigation.MAIN_GRAPH_ROUTE_PATTERN
-import com.appname.happyAging.presentation.common.navigation.go
 import com.appname.happyAging.presentation.common.utils.CustomPassWordVisualTransformation
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(
-    navController: NavController,
+    onLoginSuccess: () -> Unit = {},
+    onEmailSignup : () -> Unit = {},
+    onKakaoSignup : () -> Unit = {},
     viewModel: AuthViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -155,11 +154,8 @@ fun LoginScreen(
                             coroutineComposeScope.launch {
                                 val resp = viewModel.emailLogin(params)
                                 if(resp){
-                                    navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
-                                        popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
-                                            inclusive = true
-                                        }
-                                    }
+                                    onLoginSuccess()
+
                                 }
                             }
                         }
@@ -227,11 +223,7 @@ fun LoginScreen(
                 coroutineComposeScope.launch {
                     val resp = viewModel.emailLogin(params)
                     if(resp){
-                        navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
-                            popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
-                                inclusive = true
-                            }
-                        }
+                        onLoginSuccess()
                     }
                 }
             }
@@ -244,7 +236,7 @@ fun LoginScreen(
                 modifier = Modifier
                     .align(Alignment.Start)
                     .clickable {
-                        navController.go(LoginRouter.EMAIL_SIGNUP)
+                        onEmailSignup()
                     },
             )
             Spacer(modifier = Modifier.height(Sizes.INTERVAL2))
@@ -283,8 +275,15 @@ fun LoginScreen(
             KakaoButton(text = "카카오 로그인") {
                 coroutineComposeScope.launch {
                     val resp = viewModel.kakaoLogin(context)
-                    if(resp){
-                        navController.go(LoginRouter.KAKAO_SIGNUP)
+                    when(resp){
+                        is SocialInfoModel.Success -> {
+                            onLoginSuccess()
+                        }
+                        is SocialInfoModel.Error -> {
+                        }
+                        is SocialInfoModel.Progress -> {
+                            onKakaoSignup()
+                        }
                     }
                 }
 
@@ -328,5 +327,5 @@ fun TopPart() {
 @Preview
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen(navController = NavController(LocalContext.current))
+    LoginScreen()
 }

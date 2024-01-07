@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,7 +28,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.appname.happyAging.domain.model.senior.RelationWithSenior
 import com.appname.happyAging.domain.params.senior.UpdateSeniorParams
 import com.appname.happyAging.presentation.auth.view.AddressWebView
@@ -40,7 +38,6 @@ import com.appname.happyAging.presentation.common.constant.Colors
 import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.constant.TextStyles
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
-import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.navigation.Router
 import com.appname.happyAging.presentation.common.state.UiState
 import com.appname.happyAging.presentation.common.utils.noRippleClickable
@@ -53,17 +50,16 @@ import java.time.LocalDate
 @SuppressLint("UnrememberedGetBackStackEntry")
 @Composable
 fun EditSeniorScreen(
-    navController: NavController,
+    backAction: () -> Unit,
     id: Long,
+    seniorViewModel : SeniorViewModel = hiltViewModel()
 ) {
-    val parentEntry = remember { navController.getBackStackEntry(BottomNavRouter.SENIOR_LIST.routePath) }
-    val viewModel : SeniorViewModel = hiltViewModel(parentEntry)
-    val state = viewModel.senior.collectAsState()
+    val state = seniorViewModel.senior.collectAsState()
     val senior = (state.value as UiState.Success).data.find { it.id == id }!!
     DefaultLayout(
         title = Router.SENIOR_EDIT.korean,
         actions = {
-            IconButton(onClick = { navController.popBackStack()}) {
+            IconButton(onClick = backAction) {
                 Icon(Icons.Default.Close, contentDescription = "취소")
             }
         }
@@ -266,8 +262,8 @@ fun EditSeniorScreen(
                         address = address,
                         relation = relation,
                     )
-                    viewModel.updateSenior(params)
-                    navController.popBackStack()
+                    seniorViewModel.updateSenior(params)
+                    backAction()
                 }
                 Spacer(modifier = Modifier.height(Sizes.INTERVAL_MEDIUM))
             }
