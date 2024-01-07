@@ -30,8 +30,8 @@ class AuthViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    val socialInfo : StateFlow<SocialInfoModel.Progress?> get() = _socialInfo
-    private val _socialInfo = MutableStateFlow<SocialInfoModel.Progress?>(null)
+    val socialInfo : StateFlow<SocialInfoModel?> get() = _socialInfo
+    private val _socialInfo = MutableStateFlow<SocialInfoModel?>(null)
     suspend fun emailLogin(loginParams: LoginParams) : Boolean{
         loginUseCase(loginParams).onSuccess {
             return true
@@ -55,11 +55,11 @@ class AuthViewModel @Inject constructor(
     /**
      * true이면 회원가입페이지로 이동, false이면 그대로
      */
-    suspend fun kakaoLogin(context: Context) : Boolean{
+    suspend fun kakaoLogin(context: Context) : SocialInfoModel{
         val kakaoToken = handleKakaoLogin(context)
         if(kakaoToken == null){
             Log.e(TAG, "카카오계정으로 로그인 실패")
-            return false
+            return SocialInfoModel.Error("카카오계정으로 로그인 실패")
         }
         val params = SocialLoginParams(
             accessToken = kakaoToken.accessToken,
@@ -69,10 +69,11 @@ class AuthViewModel @Inject constructor(
             Log.i(TAG, "카카오계정으로 로그인 성공 $it")
             if (it is SocialInfoModel.Progress){
                 _socialInfo.value = it
-                return true
+                return it
             }
+            return it
         }
-        return false
+        return SocialInfoModel.Error("카카오계정으로 로그인 실패")
     }
 
     private suspend fun handleKakaoLogin(context: Context): OAuthToken? =

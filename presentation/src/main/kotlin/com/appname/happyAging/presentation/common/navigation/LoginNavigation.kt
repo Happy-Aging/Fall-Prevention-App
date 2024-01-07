@@ -1,13 +1,15 @@
 package com.appname.happyAging.presentation.common.navigation
 
+import android.annotation.SuppressLint
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.appname.happyAging.presentation.auth.view.LoginScreen
-import com.appname.happyAging.presentation.auth.view.SignupScreenFactory
-import com.appname.happyAging.presentation.auth.view.emailSignup
-import com.appname.happyAging.presentation.auth.view.kakaoSignup
+import com.appname.happyAging.presentation.auth.view.SignupScreen
+import com.appname.happyAging.presentation.auth.viewmodel.AuthViewModel
 
 const val LOGIN_GRAPH_ROUTE_PATTERN = "/login"
 
@@ -23,6 +25,7 @@ enum class LoginRouter(
 
 
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.loginGraph(
     navController: NavController,
 ) {
@@ -31,13 +34,57 @@ fun NavGraphBuilder.loginGraph(
         startDestination = LoginRouter.LOGIN.routePath,
     ) {
         composable(route = LoginRouter.LOGIN.routePath) {
-            LoginScreen(navController)
+            LoginScreen(
+                onLoginSuccess = {
+                    navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                        popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                            inclusive = true
+                        }
+                    }
+                },
+                onEmailSignup = {
+                    navController.go(LoginRouter.EMAIL_SIGNUP)
+                },
+                onKakaoSignup = {
+                    navController.go(LoginRouter.KAKAO_SIGNUP)
+                }
+            )
         }
         composable(route = LoginRouter.EMAIL_SIGNUP.routePath) {
-            SignupScreenFactory.emailSignup(navController)
+            val parentEntry = remember { navController.getBackStackEntry(LoginRouter.LOGIN.routePath) }
+            val authViewModel : AuthViewModel = hiltViewModel(parentEntry)
+            SignupScreen(
+                onBackButton = {
+                    navController.popBackStack()
+                },
+                signupSuccess = {
+                    navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                        popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                            inclusive = true
+                        }
+                    }
+                },
+                isKakaoSignup = false,
+                authViewModel = authViewModel,
+            )
         }
         composable(route = LoginRouter.KAKAO_SIGNUP.routePath) {
-            SignupScreenFactory.kakaoSignup(navController)
+            val parentEntry = remember { navController.getBackStackEntry(LoginRouter.LOGIN.routePath) }
+            val authViewModel : AuthViewModel = hiltViewModel(parentEntry)
+            SignupScreen(
+                onBackButton = {
+                    navController.popBackStack()
+                },
+                signupSuccess = {
+                    navController.navigate(MAIN_GRAPH_ROUTE_PATTERN){
+                        popUpTo(LOGIN_GRAPH_ROUTE_PATTERN){
+                            inclusive = true
+                        }
+                    }
+                },
+                isKakaoSignup = true,
+                authViewModel = authViewModel,
+            )
         }
     }
 }
