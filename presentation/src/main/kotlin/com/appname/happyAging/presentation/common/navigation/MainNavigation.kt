@@ -16,7 +16,15 @@ fun NavGraphBuilder.mainGraph(
         startDestination = MAIN_ROUTE,
     ) {
         composable(route = MAIN_ROUTE) {
-            MainScreen(navController)
+            MainScreen(
+                onLogoutClick = {
+                    navController.navigate(LOGIN_GRAPH_ROUTE_PATTERN){
+                        popUpTo(MAIN_GRAPH_ROUTE_PATTERN){
+                            inclusive = true
+                        }
+                    }
+                },
+            )
         }
 
     }

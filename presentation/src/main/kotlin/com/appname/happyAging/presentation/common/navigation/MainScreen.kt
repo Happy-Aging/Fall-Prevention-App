@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.common.navigation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,15 +12,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,9 +54,12 @@ enum class Router(
     EDIT_INFO("edit-info", "정보 수정"),
 }
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(
+    onLogoutClick: () -> Unit = {},
+) {
     val items = BottomNavRouter.values().toList()
 
     val mainNavHostController = rememberNavController()
@@ -112,22 +116,52 @@ fun MainScreen(navController: NavController) {
                 Text("낙상예방 콘텐츠")
             }
             composable(route = BottomNavRouter.SENIOR_LIST.routePath) {
-                SeniorScreen(navController = mainNavHostController)
+                SeniorScreen(
+                    onSeniorEditClick = { seniorId->
+                        mainNavHostController.navigate("${Router.SENIOR_EDIT.routePath}/$seniorId")
+                    },
+                    onAddSeniorClick = {
+                        mainNavHostController.navigate(Router.SENIOR_CREATE.routePath)
+                    },
+                )
             }
             composable(route = BottomNavRouter.PROFILE.routePath) {
-                MyPageScreen(navController = mainNavHostController, rootNavController = navController)
+                MyPageScreen(
+                    onLogoutClick = onLogoutClick,
+                    onEditUserInfoClick = {
+                        mainNavHostController.navigate(Router.EDIT_INFO.routePath)
+                    },
+                    onDeleteUserClick = onLogoutClick,
+                )
             }
             composable(route = Router.SENIOR_CREATE.routePath) {
-                CreateSeniorScreen(navController = mainNavHostController)
+                val parentEntry = remember { mainNavHostController.getBackStackEntry(BottomNavRouter.SENIOR_LIST.routePath) }
+                CreateSeniorScreen(
+                    backAction = {
+                        mainNavHostController.popBackStack()
+                    },
+                    seniorViewModel = hiltViewModel(parentEntry),
+                )
             }
             composable(route = "${Router.SENIOR_EDIT.routePath}/{id}") {
+                val parentEntry = remember { mainNavHostController.getBackStackEntry(BottomNavRouter.SENIOR_LIST.routePath) }
+
                 EditSeniorScreen(
-                    navController = mainNavHostController,
-                    id = it.arguments?.getString("id")?.toLong()!!
+                    backAction = {
+                        mainNavHostController.popBackStack()
+                    },
+                    id = it.arguments?.getString("id")?.toLong()!!,
+                    seniorViewModel = hiltViewModel(parentEntry),
                 )
             }
             composable(route = Router.EDIT_INFO.routePath) {
-                EditInfoScreen(navController = mainNavHostController)
+                val parentEntry = remember { mainNavHostController.getBackStackEntry(BottomNavRouter.PROFILE.routePath) }
+                EditInfoScreen(
+                    onSaveButtonClick= {
+                        mainNavHostController.popBackStack()
+                    },
+                    userViewModel = hiltViewModel(parentEntry),
+                )
             }
         }
     }
@@ -136,5 +170,5 @@ fun MainScreen(navController: NavController) {
 @Preview
 @Composable
 fun MainScreenPreview() {
-    MainScreen(navController = NavController(LocalContext.current))
+    MainScreen()
 }
