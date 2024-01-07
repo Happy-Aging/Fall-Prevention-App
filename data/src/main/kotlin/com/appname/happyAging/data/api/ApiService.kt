@@ -23,7 +23,7 @@ interface ApiService {
     //--------------------- Auth ---------------------//
     @POST("/auth/login")
     @Headers("Auth: false")
-    suspend fun login(@Body request: LoginRequest): TokenResponse
+    suspend fun login(@Body request: LoginRequest): Response<TokenResponse>
 
     @POST("/auth/login/social")
     @Headers("Auth: false")
@@ -31,35 +31,35 @@ interface ApiService {
 
     @POST("/auth/join")
     @Headers("Auth: false")
-    suspend fun signup(@Body request: SignupRequest) : TokenResponse
+    suspend fun signup(@Body request: SignupRequest) : Response<TokenResponse>
 
     @POST("/auth/join/social")
     @Headers("Auth: false")
-    suspend fun socialSignup(@Body request: SocialSignupRequest): TokenResponse
+    suspend fun socialSignup(@Body request: SocialSignupRequest): Response<TokenResponse>
 
     //--------------------- User ---------------------//
     @GET("/user")
-    suspend fun getUser(): UserResponse
+    suspend fun getUser(): Response<UserResponse>
 
     @PUT("/user")
-    suspend fun updateUser(@Body request: UpdateUserRequest)
+    suspend fun updateUser(@Body request: UpdateUserRequest) :Response<Unit>
 
     @DELETE("/user")
-    suspend fun deleteUser()
+    suspend fun deleteUser() : Response<Unit>
 
 
     //--------------------- Senior ---------------------//
     @GET("/senior")
-    suspend fun getSeniorList(): List<SeniorDto>
+    suspend fun getSeniorList(): Response<List<SeniorDto>>
 
     @POST("/senior")
-    suspend fun createSenior(@Body request: CreateSeniorRequest): Long
+    suspend fun createSenior(@Body request: CreateSeniorRequest): Response<Long>
 
     @PUT("/senior/{id}")
-    suspend fun updateSenior(@Path("id") id: Long, @Body request: UpdateSeniorRequest)
+    suspend fun updateSenior(@Path("id") id: Long, @Body request: UpdateSeniorRequest) : Response<Unit>
 
     @DELETE("/senior/{id}")
-    suspend fun deleteSenior(@Path("id") id: Long)
+    suspend fun deleteSenior(@Path("id") id: Long) : Response<Unit>
 }
 
 

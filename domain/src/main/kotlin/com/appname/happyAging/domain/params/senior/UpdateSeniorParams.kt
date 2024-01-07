@@ -7,6 +7,7 @@ import java.time.LocalDate
 class UpdateSeniorParams(
     val id: Long,
     val name: String,
+    val phoneNumber: String?,
     val birth: LocalDate,
     val address: String,
     val relation: RelationWithSenior,
@@ -21,7 +22,7 @@ fun SeniorModel.update(updateSeniorParams: UpdateSeniorParams): SeniorModel {
         name = updateSeniorParams.name,
         birth = updateSeniorParams.birth,
         address = updateSeniorParams.address,
-        phoneNumber = this.phoneNumber,
+        phoneNumber = updateSeniorParams.phoneNumber,
         relation = updateSeniorParams.relation,
         fallRiskRank = this.fallRiskRank,
     )

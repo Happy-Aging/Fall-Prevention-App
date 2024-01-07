@@ -258,6 +258,7 @@ fun EditSeniorScreen(
                     val params = UpdateSeniorParams(
                         id = id,
                         name = seniorName,
+                        phoneNumber = seniorPhoneNumber.ifEmpty { null },
                         birth = birthDate,
                         address = address,
                         relation = relation,
