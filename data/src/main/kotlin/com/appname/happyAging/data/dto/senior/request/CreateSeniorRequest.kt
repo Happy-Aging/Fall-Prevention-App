@@ -1,6 +1,7 @@
 package com.appname.happyAging.data.dto.senior.request
 
 import com.appname.happyAging.domain.model.senior.RelationWithSenior
+import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 
 data class CreateSeniorRequest(
     val name: String,
@@ -10,3 +11,12 @@ data class CreateSeniorRequest(
     val relation : RelationWithSenior,
 )
 
+fun CreateSeniorParams.toData(): CreateSeniorRequest {
+    return CreateSeniorRequest(
+        name = name,
+        address = address,
+        phoneNumber = phoneNumber,
+        birth = birth.toString(),
+        relation = relation,
+    )
+}
