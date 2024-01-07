@@ -57,7 +57,10 @@ fun TextRow(text: String, onClick: () -> Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(Sizes.DEFAULT_PADDING)
+            .padding(
+                horizontal = Sizes.DEFAULT_PADDING,
+                vertical = Sizes.INTERVAL_MEDIUM,
+            )
             .noRippleClickable {
                 onClick()
             }
