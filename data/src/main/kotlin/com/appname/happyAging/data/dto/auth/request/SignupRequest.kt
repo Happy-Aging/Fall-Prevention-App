@@ -17,7 +17,7 @@ data class SocialSignupRequest(
     val name: String,
     val email: String,
     val phoneNumber : String?,
-    val type: UserType,
+    val userType: UserType,
     val vendor : VendorType,
 )
 
@@ -35,6 +35,6 @@ fun SignupParams.toSocialSignupData() = SocialSignupRequest(
     name = name,
     email = email,
     phoneNumber = phoneNumber,
-    type = type,
+    userType = type,
     vendor = vendor,
 )

@@ -33,7 +33,7 @@ interface ApiService {
     @Headers("Auth: false")
     suspend fun signup(@Body request: SignupRequest) : TokenResponse
 
-    @POST("/auth/jogin/social")
+    @POST("/auth/join/social")
     @Headers("Auth: false")
     suspend fun socialSignup(@Body request: SocialSignupRequest): TokenResponse
 
