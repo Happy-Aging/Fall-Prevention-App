@@ -25,6 +25,7 @@ import com.appname.happyAging.presentation.common.constant.Sizes
 import com.appname.happyAging.presentation.common.layout.DefaultLayout
 import com.appname.happyAging.presentation.common.navigation.BottomNavRouter
 import com.appname.happyAging.presentation.common.state.UiState
+import com.appname.happyAging.presentation.senior.component.EmptySeniorItem
 import com.appname.happyAging.presentation.senior.component.SeniorItemFactory
 import com.appname.happyAging.presentation.senior.component.fromModel
 import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
@@ -49,6 +50,10 @@ fun SeniorScreen(
                     // TODO : 로딩중일때
                 }
                 is UiState.Success -> {
+                    if((seniorList.value as UiState.Success<List<SeniorModel>>).data.isEmpty()){
+                        EmptySeniorItem()
+                    }
+
                     (seniorList.value as UiState.Success<List<SeniorModel>>).data.forEach{ person ->
                         SeniorItemFactory.fromModel(
                             person
