@@ -34,6 +34,7 @@ import com.appname.happyAging.presentation.my.view.MyPageScreen
 import com.appname.happyAging.presentation.senior.view.CreateSeniorScreen
 import com.appname.happyAging.presentation.senior.view.EditSeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
+import com.appname.happyAging.presentation.senior.view.SeniorScreenV2
 
 enum class BottomNavRouter(
     val routePath: String,
@@ -113,7 +114,7 @@ fun MainScreen(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(route = BottomNavRouter.FALL_PREVENTION.routePath) {
-                Text("낙상예방 콘텐츠")
+                SeniorScreenV2()
             }
             composable(route = BottomNavRouter.SENIOR_LIST.routePath) {
                 SeniorScreen(
