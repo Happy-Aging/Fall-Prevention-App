@@ -21,7 +21,11 @@ class AuthRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : AuthRepository {
     override suspend fun login(loginParams: LoginParams): JwtToken {
-        return apiService.login(loginParams.toData()).toDomain()
+        val resp = apiService.login(loginParams.toData())
+        if(resp.isSuccessful){
+            return resp.body()!!.toDomain()
+        }
+        throw Exception(resp.message())
     }
 
     override suspend fun socialLogin(socialLoginParams: SocialLoginParams): SocialInfoModel {
@@ -42,9 +46,19 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signup(signupParams: SignupParams) : JwtToken{
         return if(signupParams.password == null){
-            apiService.socialSignup(signupParams.toSocialSignupData()).toDomain()
+            val resp = apiService.socialSignup(signupParams.toSocialSignupData())
+            if(resp.isSuccessful) {
+                resp.body()!!.toDomain()
+            }else{
+                throw Exception(resp.message())
+            }
         }else{
-            apiService.signup(signupParams.toEmailSignupData()).toDomain()
+            val resp = apiService.signup(signupParams.toEmailSignupData())
+            if(resp.isSuccessful) {
+                resp.body()!!.toDomain()
+            }else{
+                throw Exception(resp.message())
+            }
         }
     }
 }
