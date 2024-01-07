@@ -33,9 +33,6 @@ fun DefaultLayout(
     actions: @Composable RowScope.() -> Unit = {},
     body: @Composable () -> Unit,
 ) {
-    assert(actions == {} || title != null) {
-        "title이 null이 아닌 경우에만 actions을 넣어주세요."
-    }
     Scaffold(
         topBar = {
             title?.let {
