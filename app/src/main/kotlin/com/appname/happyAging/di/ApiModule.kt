@@ -1,11 +1,12 @@
 package com.appname.happyAging.di
 
-import android.content.SharedPreferences
 import com.appname.happyAging.data.api.ApiConstants.BASE_URL
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.data.api.AuthInterceptor
 import com.appname.happyAging.data.api.HeaderInterceptor
 import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 import javax.inject.Singleton
 
 @Module
@@ -60,7 +62,18 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideConverterFactory(): Converter.Factory{
-        return GsonConverterFactory.create()
+        val gson = GsonBuilder()
+            .registerTypeAdapter(LocalDate::class.java, object : JsonDeserializer<LocalDate> {
+                override fun deserialize(
+                    json: com.google.gson.JsonElement?,
+                    typeOfT: java.lang.reflect.Type?,
+                    context: com.google.gson.JsonDeserializationContext?
+                ): LocalDate {
+                    return LocalDate.parse(json!!.asString)
+                }
+            })
+            .create()
+        return GsonConverterFactory.create(gson)
     }
     @Singleton
     @Provides
