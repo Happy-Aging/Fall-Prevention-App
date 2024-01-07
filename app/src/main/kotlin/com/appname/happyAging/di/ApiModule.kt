@@ -7,6 +7,7 @@ import com.appname.happyAging.data.api.HeaderInterceptor
 import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+import com.google.gson.JsonSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -63,6 +64,15 @@ object ApiModule {
     @Provides
     fun provideConverterFactory(): Converter.Factory{
         val gson = GsonBuilder()
+            .registerTypeAdapter(LocalDate::class.java, object : JsonSerializer<LocalDate> {
+                override fun serialize(
+                    src: LocalDate?,
+                    typeOfSrc: java.lang.reflect.Type?,
+                    context: com.google.gson.JsonSerializationContext?
+                ): com.google.gson.JsonElement {
+                    return com.google.gson.JsonPrimitive(src.toString())
+                }
+            })
             .registerTypeAdapter(LocalDate::class.java, object : JsonDeserializer<LocalDate> {
                 override fun deserialize(
                     json: com.google.gson.JsonElement?,
