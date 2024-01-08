@@ -1,5 +1,7 @@
 package com.appname.happyAging.data.dto.survey.request
 
+import com.appname.happyAging.domain.params.survey.SurveySubmitParams
+
 data class SurveySubmitDto(
     val questionId: Long,
     val choiceId: Long?,
@@ -10,3 +12,9 @@ data class SurveySubmitDto(
         require((choiceId == null) xor (subjectiveResponse == null))
     }
 }
+
+fun SurveySubmitParams.toData() = SurveySubmitDto(
+    questionId = questionId,
+    choiceId = objectiveAnswerId,
+    subjectiveResponse = subjectiveAnswer,
+)
