@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity() {
                             Spacer(modifier =Modifier.fillMaxSize())
                         }
                         is Success -> {
-                            val isLogin = (uiState as Success).jwtToken != null
+                            val isLogin = (uiState as Success).data != null
                             val startDestination = if(isLogin) {
                                 TopLevelDestination.MAIN
                             } else {
