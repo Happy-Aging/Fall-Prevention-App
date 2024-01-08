@@ -105,6 +105,7 @@ class AuthViewModel @Inject constructor(
                         UserApiClient.instance.loginWithKakaoAccount(context, callback = callback)
                     } else if (token != null) {
                         Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
+                        continuation.resume(token)
                     }
                 }
             } else {
