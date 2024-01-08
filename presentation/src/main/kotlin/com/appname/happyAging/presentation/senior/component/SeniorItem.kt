@@ -42,14 +42,23 @@ import java.time.LocalDate
 object SeniorItemFactory
 
 @Composable
-fun SeniorItemFactory.fromModel(model: SeniorModel, onEditClicked: () -> Unit = {}) {
+fun SeniorItemFactory.fromModel(
+    model: SeniorModel,
+    onEditClicked: () -> Unit = {},
+    onSurveyHistoryClick: () -> Unit = {},
+    onSurveyClick: () -> Unit = {},
+    onTakeImageClicked : () -> Unit = {},
+) {
     SeniorItem(
         fallRiskRank = model.fallRiskRank,
         name = model.name,
         age = model.birth?.let { LocalDate.now().year - it.year },
         address = model.address,
         relation = model.relation,
-        onEditClicked = onEditClicked
+        onEditClicked = onEditClicked,
+        onSurveyHistoryClick = onSurveyHistoryClick,
+        onSurveyClick = onSurveyClick,
+        onTakeImageClick = onTakeImageClicked,
     )
 }
 
@@ -67,7 +76,10 @@ fun SeniorItem(
     age: Int?,
     address: String,
     relation: RelationWithSenior,
-    onEditClicked: () -> Unit,
+    onEditClicked: () -> Unit = {},
+    onSurveyHistoryClick: () -> Unit = {},
+    onSurveyClick: () -> Unit = {},
+    onTakeImageClick : () -> Unit = {},
 ) {
     var isClicked by rememberSaveable { mutableStateOf(false) }
     val riskType = FallRiskRank.values().first{ it.rankNum == fallRiskRank }
@@ -170,13 +182,13 @@ fun SeniorItem(
             ) {
                 SeniorDetailMenu(title = "새로", detailContent = "낙상 위험도 측정하기",
                     iconId = R.drawable.list,
-                    onClick = { })
+                    onClick = onSurveyClick)
                 SeniorDetailMenu(title = "이전", detailContent = "낙상 위험도 보기",
                     iconId = R.drawable.folder,
-                    onClick = { })
+                    onClick = onSurveyHistoryClick)
                 SeniorDetailMenu(title = "집 안", detailContent = "사진찍기",
                     iconId = R.drawable.picture,
-                    onClick = { })
+                    onClick = onTakeImageClick)
             }
         }
     }

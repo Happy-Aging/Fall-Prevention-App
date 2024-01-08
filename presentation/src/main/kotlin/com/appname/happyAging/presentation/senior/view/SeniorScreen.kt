@@ -33,6 +33,9 @@ import com.appname.happyAging.presentation.senior.viewmodel.SeniorViewModel
 @Composable
 fun SeniorScreen(
     onSeniorEditClick: (Long) -> Unit = {},
+    onSurveyHistoryClick: (Long) -> Unit = {},
+    onSurveyClick: (Long) -> Unit = {},
+    onTakeImageClicked : (Long) -> Unit = {},
     onAddSeniorClick: () -> Unit = {},
     viewModel : SeniorViewModel = hiltViewModel(),
 ) {
@@ -56,10 +59,20 @@ fun SeniorScreen(
 
                     (seniorList.value as UiState.Success<List<SeniorModel>>).data.forEach{ person ->
                         SeniorItemFactory.fromModel(
-                            person
-                        ) {
-                            onSeniorEditClick(person.id)
-                        }
+                            model = person,
+                            onEditClicked = {
+                                onSeniorEditClick(person.id)
+                            },
+                            onSurveyHistoryClick = {
+                                onSurveyHistoryClick(person.id)
+                            },
+                            onSurveyClick = {
+                                onSurveyClick(person.id)
+                            },
+                            onTakeImageClicked = {
+                                onTakeImageClicked(person.id)
+                            },
+                        )
                         Divider()
                     }
                 }
