@@ -64,14 +64,14 @@ class HeaderInterceptor @Inject constructor(
     private val jwtTokenRepository: JwtTokenRepository,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        if(chain.request().headers["Auth"] == "false"){
+        if (chain.request().headers["Auth"] == "false") {
             val newRequest = chain.request().newBuilder()
                 .removeHeader("Auth")
                 .build()
             return chain.proceed(newRequest)
         }
 
-        var token = ""
+        var token: String
         runBlocking {
             val accessToken = jwtTokenRepository.getJwtToken()!!.accessToken
             token = ("Bearer $accessToken")
@@ -79,9 +79,8 @@ class HeaderInterceptor @Inject constructor(
         val newRequest = chain.request().newBuilder()
             .addHeader("Authorization", token)
             .build()
-        val response = chain.proceed(newRequest)
 
 
-        return response
+        return chain.proceed(newRequest)
     }
 }

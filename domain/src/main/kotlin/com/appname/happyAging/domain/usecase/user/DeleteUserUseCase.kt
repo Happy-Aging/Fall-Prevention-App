@@ -10,7 +10,7 @@ class DeleteUserUseCase @Inject constructor(
 ){
     suspend operator fun invoke() : ApiResponse<Unit> {
         val resp = userRepository.deleteUser()
-        val logout = logoutUseCase()
+        logoutUseCase()
         return resp
     }
 }

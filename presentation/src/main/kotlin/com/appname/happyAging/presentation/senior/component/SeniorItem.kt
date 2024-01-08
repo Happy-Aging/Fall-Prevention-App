@@ -52,7 +52,7 @@ fun SeniorItemFactory.fromModel(
     SeniorItem(
         fallRiskRank = model.fallRiskRank,
         name = model.name,
-        age = model.birth?.let { LocalDate.now().year - it.year },
+        age = model.birth.let { LocalDate.now().year - it.year },
         address = model.address,
         relation = model.relation,
         onEditClicked = onEditClicked,

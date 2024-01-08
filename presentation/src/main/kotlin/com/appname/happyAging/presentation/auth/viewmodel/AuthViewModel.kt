@@ -43,7 +43,7 @@ class AuthViewModel @Inject constructor(
         return false
     }
 
-    suspend fun signup(signupParams: SignupParams, context: Context) : Boolean{
+    suspend fun signup(signupParams: SignupParams) : Boolean{
         signupUseCase(signupParams).onSuccess {
             Log.i(TAG, "회원가입 성공")
             return true

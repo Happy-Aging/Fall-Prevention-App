@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -60,10 +59,6 @@ fun SignupScreen(
     isKakaoSignup: Boolean = false,
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
-
-
-    val context = LocalContext.current
-
     val emailFromVendor = authViewModel.socialInfo.collectAsState()
 
     var userName by rememberSaveable { mutableStateOf("") }
@@ -311,7 +306,7 @@ fun SignupScreen(
                         vendor = VendorType.KAKAO
                     )
                     coroutineComposeScope.launch{
-                        val resp = authViewModel.signup(signupParams, context)
+                        val resp = authViewModel.signup(signupParams)
                         if(resp){
                             signupSuccess()
 
@@ -355,7 +350,7 @@ fun SignupScreen(
                     vendor = VendorType.HAPPY_AGING
                 )
                 coroutineComposeScope.launch{
-                    val resp = authViewModel.signup(signupParams, context)
+                    val resp = authViewModel.signup(signupParams)
                     if(resp){
                         signupSuccess()
                     }
