@@ -7,6 +7,10 @@ import com.appname.happyAging.domain.params.survey.SurveySubmitParams
 
 interface SurveyRepository {
     suspend fun getSurveyQuestionList(): ApiResponse<List<SurveyQuestionModel>>
-    suspend fun submitSurvey(surveySubmitList: List<SurveySubmitParams>): ApiResponse<SurveyResultModel>
-    suspend fun getPreviousSurveyResult(seniorId : Long): ApiResponse<List<SurveyResultModel>>
+    suspend fun submitSurvey(
+        seniorId: Long,
+        surveySubmitList: List<SurveySubmitParams>
+    ): ApiResponse<SurveyResultModel>
+
+    suspend fun getPreviousSurveyResult(seniorId: Long): ApiResponse<List<SurveyResultModel>>
 }
