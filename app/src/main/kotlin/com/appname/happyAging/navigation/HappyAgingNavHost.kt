@@ -12,6 +12,7 @@ fun HappyAgingNavHost(
     appState: HappyAgingAppState,
     modifier: Modifier = Modifier,
     startDestination: String = TopLevelDestination.LOGIN.routePath,
+    openSourceClick : () -> Unit = {},
 ) {
     val navController = appState.navController
     NavHost(
@@ -20,6 +21,6 @@ fun HappyAgingNavHost(
         modifier = modifier,
     ){
         loginGraph(navController)
-        mainGraph(navController)
+        mainGraph(navController, openSourceClick)
     }
 }

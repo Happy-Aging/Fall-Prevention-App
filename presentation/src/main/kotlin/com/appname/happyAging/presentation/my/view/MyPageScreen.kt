@@ -8,6 +8,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.appname.happyAging.presentation.common.constant.Sizes
@@ -22,8 +23,10 @@ fun MyPageScreen(
     onLogoutClick : () -> Unit = {},
     onEditUserInfoClick : () -> Unit = {},
     onDeleteUserClick : () -> Unit = {},
+    onOpenSourceClick : () -> Unit = {},
     viewModel : UserViewModel = hiltViewModel(),
 ){
+    val activity = LocalContext.current
     DefaultLayout(title = BottomNavRouter.PROFILE.korean) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -41,6 +44,11 @@ fun MyPageScreen(
             TextRow(text = "개인정보 이용약관") {
                 //todo
             }
+            Divider()
+            TextRow(
+                text = "오픈소스 라이선스",
+                onClick = onOpenSourceClick
+            )
             Divider()
             TextRow(text = "회원 탈퇴") {
                 viewModel.deleteUser()

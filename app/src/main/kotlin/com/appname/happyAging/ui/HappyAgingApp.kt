@@ -31,6 +31,7 @@ fun HappyAgingApp(
         networkMonitor = networkMonitor,
     ),
     startDestination: TopLevelDestination,
+    openSourceClick : () -> Unit = {},
 ) {
     val isOffline by appState.isOffline.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -59,6 +60,7 @@ fun HappyAgingApp(
             HappyAgingNavHost(
                 appState = appState,
                 startDestination = startDestination.routePath,
+                openSourceClick = openSourceClick,
             )
         }
     }

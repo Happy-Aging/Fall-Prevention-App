@@ -62,6 +62,7 @@ enum class Router(
 @Composable
 fun MainScreen(
     onLogoutClick: () -> Unit = {},
+    onOpenSourceClick: () -> Unit = {},
 ) {
     val items = BottomNavRouter.values().toList()
 
@@ -138,6 +139,7 @@ fun MainScreen(
                         mainNavHostController.navigate(Router.EDIT_INFO.routePath)
                     },
                     onDeleteUserClick = onLogoutClick,
+                    onOpenSourceClick = onOpenSourceClick,
                 )
             }
             composable(route = Router.SENIOR_CREATE.routePath) {

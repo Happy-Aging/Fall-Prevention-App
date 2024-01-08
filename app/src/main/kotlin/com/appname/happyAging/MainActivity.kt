@@ -1,5 +1,6 @@
 package com.appname.happyAging
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -25,6 +26,7 @@ import com.appname.happyAging.core.utils.NetworkMonitor
 import com.appname.happyAging.navigation.TopLevelDestination
 import com.appname.happyAging.theme.Happy_agingTheme
 import com.appname.happyAging.ui.HappyAgingApp
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.google.firebase.Firebase
 import com.google.firebase.initialize
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,7 +63,6 @@ class MainActivity : ComponentActivity() {
                 else -> true
             }
         }
-
         setContent {
             Happy_agingTheme {
                 // A surface container using the 'background' color from the theme
@@ -83,6 +84,9 @@ class MainActivity : ComponentActivity() {
                             HappyAgingApp(
                                 networkMonitor = networkMonitor,
                                 startDestination = startDestination,
+                                openSourceClick = {
+                                    startActivity(Intent(this@MainActivity, OssLicensesMenuActivity::class.java))
+                                }
                             )
                         }
                     }

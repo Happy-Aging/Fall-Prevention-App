@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.kapt)
     id("com.google.gms.google-services")
+    id("com.google.android.gms.oss-licenses-plugin")
 }
 
 val properties = Properties()
@@ -78,6 +79,7 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    implementation ("com.google.android.gms:play-services-oss-licenses:17.0.0")
     implementation(project(":presentation"))
     implementation(project(":domain"))
     implementation(project(":data"))

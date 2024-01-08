@@ -10,6 +10,7 @@ const val MAIN_GRAPH_ROUTE_PATTERN = "/"
 const val MAIN_ROUTE = "main"
 fun NavGraphBuilder.mainGraph(
     navController: NavController,
+    onOpenSourceClick: () -> Unit = {},
 ) {
     navigation(
         route = MAIN_GRAPH_ROUTE_PATTERN,
@@ -24,6 +25,7 @@ fun NavGraphBuilder.mainGraph(
                         }
                     }
                 },
+                onOpenSourceClick = onOpenSourceClick,
             )
         }
 
