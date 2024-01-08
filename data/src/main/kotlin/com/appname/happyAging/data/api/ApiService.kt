@@ -8,6 +8,9 @@ import com.appname.happyAging.data.dto.auth.response.TokenResponse
 import com.appname.happyAging.data.dto.senior.request.CreateSeniorRequest
 import com.appname.happyAging.data.dto.senior.request.UpdateSeniorRequest
 import com.appname.happyAging.data.dto.senior.response.SeniorDto
+import com.appname.happyAging.data.dto.survey.request.SurveySubmitDto
+import com.appname.happyAging.data.dto.survey.response.SurveyQuestionDto
+import com.appname.happyAging.data.dto.survey.response.SurveyResultResponse
 import com.appname.happyAging.data.dto.user.request.UpdateUserRequest
 import com.appname.happyAging.data.dto.user.response.UserResponse
 import retrofit2.Response
@@ -31,7 +34,7 @@ interface ApiService {
 
     @POST("/auth/join")
     @Headers("Auth: false")
-    suspend fun signup(@Body request: SignupRequest) : Response<TokenResponse>
+    suspend fun signup(@Body request: SignupRequest): Response<TokenResponse>
 
     @POST("/auth/join/social")
     @Headers("Auth: false")
@@ -42,10 +45,10 @@ interface ApiService {
     suspend fun getUser(): Response<UserResponse>
 
     @PUT("/user")
-    suspend fun updateUser(@Body request: UpdateUserRequest) :Response<Unit>
+    suspend fun updateUser(@Body request: UpdateUserRequest): Response<Unit>
 
     @DELETE("/user")
-    suspend fun deleteUser() : Response<Unit>
+    suspend fun deleteUser(): Response<Unit>
 
 
     //--------------------- Senior ---------------------//
@@ -56,10 +59,26 @@ interface ApiService {
     suspend fun createSenior(@Body request: CreateSeniorRequest): Response<Long>
 
     @PUT("/senior/{id}")
-    suspend fun updateSenior(@Path("id") id: Long, @Body request: UpdateSeniorRequest) : Response<Unit>
+    suspend fun updateSenior(
+        @Path("id") id: Long,
+        @Body request: UpdateSeniorRequest
+    ): Response<Unit>
 
     @DELETE("/senior/{id}")
-    suspend fun deleteSenior(@Path("id") id: Long) : Response<Unit>
+    suspend fun deleteSenior(@Path("id") id: Long): Response<Unit>
+
+    //--------------------- Survey ---------------------//
+    @GET("/survey")
+    suspend fun getSurveyQuestionList(): Response<List<SurveyQuestionDto>>
+
+    @POST("/survey/{id}")
+    suspend fun submitSurvey(
+        @Path("id") id: Long,
+        @Body request: List<SurveySubmitDto>
+    ): Response<SurveyResultResponse>
+
+    @GET("/survey/{id}")
+    suspend fun getPreviousSurveyResultList(@Path("id") id: Long): Response<List<SurveyResultResponse>>
 }
 
 
