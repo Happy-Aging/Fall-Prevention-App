@@ -12,4 +12,20 @@ class SurveyQuestionOptionModel (
     val number: String,
     val content: String,
     val image : String?,
-)
+){
+    companion object{
+        fun fixture(
+            optionId: Long = 1,
+            number: String = "1",
+            content: String = "1~5회",
+            image : String? = null,
+        ): SurveyQuestionOptionModel {
+            return SurveyQuestionOptionModel(
+                optionId = optionId,
+                number = number,
+                content = content,
+                image = image,
+            )
+        }
+    }
+}

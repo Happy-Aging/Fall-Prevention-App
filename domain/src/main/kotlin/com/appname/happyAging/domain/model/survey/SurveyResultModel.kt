@@ -14,4 +14,20 @@ class SurveyResultModel(
     val date : LocalDate,
     val rank : Int,
     val summary: String,
-)
+){
+    companion object{
+        fun fixture(
+            resultId : Long = 1,
+            date : LocalDate = LocalDate.now(),
+            rank : Int = 1,
+            summary: String = "김춘자님으 낙상위험도는...",
+        ): SurveyResultModel {
+            return SurveyResultModel(
+                resultId = 1,
+                date = LocalDate.now(),
+                rank = 1,
+                summary = "summary"
+            )
+        }
+    }
+}
