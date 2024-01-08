@@ -16,10 +16,10 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override suspend fun getUser(): ApiResponse<UserModel> {
         val resp = apiService.getUser()
-        if(resp.isSuccessful){
-            return ApiResponse.Success(resp.body()!!.toDomain())
+        if(!resp.isSuccessful){
+            return ApiResponse.Error(resp.message())
         }
-        return ApiResponse.Error(resp.message())
+        return ApiResponse.Success(resp.body()!!.toDomain())
     }
 
     override suspend fun updateUser(updateUserParams: UpdateUserParams) : ApiResponse<Unit>{
