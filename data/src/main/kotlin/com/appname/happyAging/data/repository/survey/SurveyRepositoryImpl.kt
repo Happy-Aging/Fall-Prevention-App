@@ -20,7 +20,11 @@ class SurveyRepositoryImpl @Inject constructor(
         if(!resp.isSuccessful){
             return ApiResponse.Error(resp.message())
         }
-        return ApiResponse.Success(resp.body()!!.map { it.toDomain() })
+        return kotlin.runCatching { //변환과정 중에 에러가 발생할 수 있으므로 runCatching을 사용
+            ApiResponse.Success(resp.body()!!.map { it.toDomain() })
+        }.getOrElse {
+            ApiResponse.Error(it.message ?: "Internal Server Question Error 500")
+        }
     }
 
     override suspend fun submitSurvey(
