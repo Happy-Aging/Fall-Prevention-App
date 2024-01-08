@@ -6,9 +6,7 @@ import javax.inject.Inject
 class LogoutUseCase @Inject constructor(
     private val jwtTokenRepository: JwtTokenRepository,
 ){
-    suspend operator fun invoke() : Result<Unit> {
-        return runCatching {
-            jwtTokenRepository.deleteJwtToken()
-        }
+    suspend operator fun invoke() : Unit {
+        return jwtTokenRepository.deleteJwtToken()
     }
 }

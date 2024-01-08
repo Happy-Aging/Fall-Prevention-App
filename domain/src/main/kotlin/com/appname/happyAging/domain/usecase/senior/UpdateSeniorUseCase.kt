@@ -1,5 +1,6 @@
 package com.appname.happyAging.domain.usecase.senior
 
+import com.appname.happyAging.domain.model.common.ApiResponse
 import com.appname.happyAging.domain.params.senior.UpdateSeniorParams
 import com.appname.happyAging.domain.repository.senior.SeniorRepository
 import javax.inject.Inject
@@ -9,9 +10,7 @@ class UpdateSeniorUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         updateSeniorParams: UpdateSeniorParams
-    ) : Result<Unit> {
-        return runCatching {
-            seniorRepository.updateSenior(updateSeniorParams)
-        }
+    ) : ApiResponse<Unit> {
+        return seniorRepository.updateSenior(updateSeniorParams)
     }
 }

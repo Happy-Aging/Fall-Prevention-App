@@ -2,6 +2,8 @@ package com.appname.happyAging.presentation.senior.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.model.common.onFailure
+import com.appname.happyAging.domain.model.common.onSuccess
 import com.appname.happyAging.domain.model.senior.SeniorModel
 import com.appname.happyAging.domain.params.senior.CreateSeniorParams
 import com.appname.happyAging.domain.params.senior.UpdateSeniorParams
@@ -37,7 +39,7 @@ class SeniorViewModel @Inject constructor(
             getSeniorUseCase().onSuccess { seniorList ->
                 _senior.value = UiState.Success(seniorList)
             }.onFailure {
-                _senior.value = UiState.Error(it.message ?: "Unknown error")
+                _senior.value = UiState.Error(it)
             }
         }
     }
@@ -51,7 +53,7 @@ class SeniorViewModel @Inject constructor(
                 list.add(newModel)
                 _senior.value = UiState.Success(list)
             }.onFailure {
-                _senior.value = UiState.Error(it.message ?: "Unknown error")
+                _senior.value = UiState.Error(it)
             }
         }
     }
@@ -70,7 +72,7 @@ class SeniorViewModel @Inject constructor(
 
         viewModelScope.launch {
             updateSeniorUseCase(updateSeniorParams).onFailure {
-                _senior.value = UiState.Error(it.message ?: "Unknown error")
+                _senior.value = UiState.Error(it)
             }
         }
     }
@@ -87,7 +89,7 @@ class SeniorViewModel @Inject constructor(
 
         viewModelScope.launch {
             deleteSeniorUseCase(id).onFailure {
-                _senior.value = UiState.Error(it.message ?: "Unknown error")
+                _senior.value = UiState.Error(it)
             }
         }
     }

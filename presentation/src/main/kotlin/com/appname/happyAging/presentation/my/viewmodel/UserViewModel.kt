@@ -2,6 +2,8 @@ package com.appname.happyAging.presentation.my.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.model.common.onFailure
+import com.appname.happyAging.domain.model.common.onSuccess
 import com.appname.happyAging.domain.model.user.UserModel
 import com.appname.happyAging.domain.params.user.UpdateUserParams
 import com.appname.happyAging.domain.params.user.update
@@ -35,7 +37,7 @@ class UserViewModel @Inject constructor(
             getUserUseCase().onSuccess { userModel ->
                 _user.value = UiState.Success(userModel)
             }.onFailure {
-                _user.value = UiState.Error(it.message ?: "Unknown error")
+                _user.value = UiState.Error(it)
             }
         }
     }
@@ -47,7 +49,7 @@ class UserViewModel @Inject constructor(
         _user.value = UiState.Success(model)
         viewModelScope.launch {
             updateUserUseCase(updateUserParams).onFailure {
-                _user.value = UiState.Error(it.message ?: "Unknown error")
+                _user.value = UiState.Error(it)
             }
         }
     }
@@ -57,16 +59,14 @@ class UserViewModel @Inject constructor(
 
         viewModelScope.launch {
             deleteUserUseCase().onFailure {
-                _user.value = UiState.Error(it.message ?: "Unknown error")
+                _user.value = UiState.Error(it)
             }
         }
     }
 
     fun logout(){
         viewModelScope.launch {
-            logoutUseCase().onFailure {
-                _user.value = UiState.Error(it.message ?: "Unknown error")
-            }
+            logoutUseCase()
         }
     }
 }

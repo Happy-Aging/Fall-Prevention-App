@@ -4,6 +4,8 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.appname.happyAging.domain.model.auth.SocialInfoModel
+import com.appname.happyAging.domain.model.common.onFailure
+import com.appname.happyAging.domain.model.common.onSuccess
 import com.appname.happyAging.domain.params.auth.LoginParams
 import com.appname.happyAging.domain.params.auth.SignupParams
 import com.appname.happyAging.domain.params.auth.SocialLoginParams
@@ -36,7 +38,7 @@ class AuthViewModel @Inject constructor(
         loginUseCase(loginParams).onSuccess {
             return true
         }.onFailure {
-            Log.e(TAG, "로그인 실패", it)
+            Log.e(TAG, "로그인 실패")
         }
         return false
     }
@@ -46,7 +48,7 @@ class AuthViewModel @Inject constructor(
             Log.i(TAG, "회원가입 성공")
             return true
         }.onFailure {
-            Log.e(TAG, "회원가입 실패", it)
+            Log.e(TAG, "회원가입 실패")
         }
         return false
     }

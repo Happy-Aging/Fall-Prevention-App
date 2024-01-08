@@ -3,6 +3,7 @@ package com.appname.happyAging.data.repository.user
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.data.dto.user.request.toData
 import com.appname.happyAging.data.dto.user.response.toDomain
+import com.appname.happyAging.domain.model.common.ApiResponse
 import com.appname.happyAging.domain.model.user.UserModel
 import com.appname.happyAging.domain.params.user.UpdateUserParams
 import com.appname.happyAging.domain.repository.user.UserRepository
@@ -13,25 +14,27 @@ import javax.inject.Singleton
 class UserRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : UserRepository {
-    override suspend fun getUser(): UserModel {
+    override suspend fun getUser(): ApiResponse<UserModel> {
         val resp = apiService.getUser()
         if(resp.isSuccessful){
-            return resp.body()!!.toDomain()
+            return ApiResponse.Success(resp.body()!!.toDomain())
         }
-        throw Exception(resp.message())
+        return ApiResponse.Error(resp.message())
     }
 
-    override suspend fun updateUser(updateUserParams: UpdateUserParams) {
+    override suspend fun updateUser(updateUserParams: UpdateUserParams) : ApiResponse<Unit>{
         val resp = apiService.updateUser(updateUserParams.toData())
         if(!resp.isSuccessful){
-            throw Exception(resp.message())
+            return ApiResponse.Error(resp.message())
         }
+        return ApiResponse.Success(Unit)
     }
 
-    override suspend fun deleteUser() {
+    override suspend fun deleteUser() : ApiResponse<Unit>{
         val resp = apiService.deleteUser()
         if(!resp.isSuccessful){
-            throw Exception(resp.message())
+            return ApiResponse.Error(resp.message())
         }
+        return ApiResponse.Success(Unit)
     }
 }

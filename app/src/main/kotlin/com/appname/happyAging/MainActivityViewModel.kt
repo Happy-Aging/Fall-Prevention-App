@@ -2,6 +2,8 @@ package com.appname.happyAging
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.appname.happyAging.domain.model.common.onFailure
+import com.appname.happyAging.domain.model.common.onSuccess
 import com.appname.happyAging.domain.model.user.UserModel
 import com.appname.happyAging.domain.repository.auth.JwtTokenRepository
 import com.appname.happyAging.domain.repository.user.UserRepository
@@ -18,9 +20,8 @@ class MainActivityViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
     val uiState : StateFlow<MainActivityUiState> = flow{
-        kotlin.runCatching {
-            userRepository.getUser()
-        }.onSuccess {
+        userRepository.getUser()
+        .onSuccess {
             emit(MainActivityUiState.Success(it))
         }.onFailure {
             emit(MainActivityUiState.Success(null))
