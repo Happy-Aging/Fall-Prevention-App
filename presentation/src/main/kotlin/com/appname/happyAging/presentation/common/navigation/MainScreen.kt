@@ -33,6 +33,7 @@ import com.appname.happyAging.presentation.my.view.EditInfoScreen
 import com.appname.happyAging.presentation.my.view.MyPageScreen
 import com.appname.happyAging.presentation.senior.view.CreateSeniorScreen
 import com.appname.happyAging.presentation.senior.view.EditSeniorScreen
+import com.appname.happyAging.presentation.senior.view.SeniorImageScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreenV2
 
@@ -53,6 +54,7 @@ enum class Router(
     SENIOR_CREATE("senior-create", "시니어 생성"),
     SENIOR_EDIT("senior-edit", "시니어 수정"),
     EDIT_INFO("edit-info", "정보 수정"),
+    IMAGE("image", "사진 찍기"),
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")
@@ -121,6 +123,9 @@ fun MainScreen(
                     onSeniorEditClick = { seniorId->
                         mainNavHostController.navigate("${Router.SENIOR_EDIT.routePath}/$seniorId")
                     },
+                    onTakeImageClicked = { seniorId->
+                        mainNavHostController.navigate("${Router.IMAGE.routePath}/$seniorId")
+                    },
                     onAddSeniorClick = {
                         mainNavHostController.navigate(Router.SENIOR_CREATE.routePath)
                     },
@@ -162,6 +167,16 @@ fun MainScreen(
                         mainNavHostController.popBackStack()
                     },
                     userViewModel = hiltViewModel(parentEntry),
+                )
+            }
+            composable(route = "${Router.IMAGE.routePath}/{id}") {
+                val parentEntry =
+                    remember { mainNavHostController.getBackStackEntry(BottomNavRouter.SENIOR_LIST.routePath) }
+                SeniorImageScreen(
+                    backButtonAction = {
+                        mainNavHostController.popBackStack()
+                    },
+                    id = it.arguments?.getString("id")?.toLong()!!,
                 )
             }
         }
