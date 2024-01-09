@@ -36,6 +36,8 @@ import com.appname.happyAging.presentation.senior.view.EditSeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorImageScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreen
 import com.appname.happyAging.presentation.senior.view.SeniorScreenV2
+import com.appname.happyAging.presentation.survey.navigation.surveyGraph
+import com.appname.happyAging.presentation.survey.navigation.surveyGraphRoute
 
 enum class BottomNavRouter(
     val routePath: String,
@@ -130,6 +132,9 @@ fun MainScreen(
                     onAddSeniorClick = {
                         mainNavHostController.navigate(Router.SENIOR_CREATE.routePath)
                     },
+                    onSurveyClick = { seniorId ->
+                        mainNavHostController.navigate(surveyGraphRoute(seniorId))
+                    }
                 )
             }
             composable(route = BottomNavRouter.PROFILE.routePath) {
@@ -181,6 +186,7 @@ fun MainScreen(
                     id = it.arguments?.getString("id")?.toLong()!!,
                 )
             }
+            surveyGraph(mainNavHostController)
         }
     }
 }
