@@ -35,6 +35,7 @@ import com.appname.happyAging.presentation.common.utils.noRippleClickable
 fun DefaultLayout(
     title: String? = null,
     backButtonAction : (() -> Unit)? = null,
+    snackbarHost : @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     body: @Composable () -> Unit,
 ) {
@@ -76,6 +77,7 @@ fun DefaultLayout(
                 )
             }
         },
+        snackbarHost = snackbarHost,
     ) {
         Box(modifier = Modifier
             .padding(it)
