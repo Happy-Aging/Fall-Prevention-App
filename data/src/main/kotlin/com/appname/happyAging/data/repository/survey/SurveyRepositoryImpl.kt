@@ -16,6 +16,11 @@ class SurveyRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : SurveyRepository {
     override suspend fun getSurveyQuestionList(): ApiResponse<List<SurveyQuestionModel>> {
+        return ApiResponse.Success(listOf(
+            SurveyQuestionModel.fixture(),
+            SurveyQuestionModel.fixture(),
+            SurveyQuestionModel.fixture(),
+        ))
         val resp = apiService.getSurveyQuestionList()
         if(!resp.isSuccessful){
             return ApiResponse.Error(resp.message())
@@ -31,6 +36,7 @@ class SurveyRepositoryImpl @Inject constructor(
         seniorId: Long,
         surveySubmitList: List<SurveySubmitParams>
     ): ApiResponse<SurveyResultModel> {
+        return ApiResponse.Success(SurveyResultModel.fixture())
         val resp = apiService.submitSurvey(seniorId,surveySubmitList.map { it.toData() })
         if(resp.isSuccessful){
             return ApiResponse.Error(resp.message())
@@ -39,6 +45,9 @@ class SurveyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getPreviousSurveyResult(seniorId: Long): ApiResponse<List<SurveyResultModel>> {
+        return ApiResponse.Success(listOf(
+            SurveyResultModel.fixture(),
+        ))
         val resp = apiService.getPreviousSurveyResultList(seniorId)
         if(resp.isSuccessful){
             return ApiResponse.Success(resp.body()!!.map { it.toDomain() })
