@@ -57,6 +57,7 @@ import com.appname.happyAging.presentation.survey.viewmodel.SurveyViewModel
 @Composable
 fun SurveyScreen(
     surveyViewModel: SurveyViewModel = hiltViewModel(),
+    seniorId : Long,
     onSubmitButtonClick : () -> Unit = {}
 ) {
     val state = surveyViewModel.survey.collectAsState()
@@ -65,6 +66,8 @@ fun SurveyScreen(
     var currentQuestionIndex by rememberSaveable { mutableStateOf(0) }
     var isAnswerSelected by rememberSaveable { mutableStateOf(true) }
     var isSubmitOk by rememberSaveable { mutableStateOf(false) }
+    val submitAnswerList : MutableList<SurveySubmitParams?> by rememberSaveable { mutableStateOf(List(1){null}.toMutableList()) }
+
     LaunchedEffect(isSubmitOk){
         if(isSubmitOk){
             onSubmitButtonClick()
@@ -94,7 +97,6 @@ fun SurveyScreen(
                 is UiState.Success -> {
                     val questionList = (state.value as UiState.Success).data
                     val currentQuestion = questionList[currentQuestionIndex]
-                    val submitAnswerList : MutableList<SurveySubmitParams?> = List(questionList.size) { null }.toMutableList()
 
                     var showDialog by rememberSaveable { mutableStateOf(false) }
                     Row(
@@ -150,17 +152,24 @@ fun SurveyScreen(
                                 "제출 하기" else "다음 문제",
                             color = Colors.DARK_BLACK,
                             onClick = {
-                                if(currentQuestionIndex == questionList.size - 1){
-                                    showDialog = true
-                                    onSubmitButtonClick()
-                                }else{
-                                    if(submitAnswerList[currentQuestionIndex] != null){ //답변을 제출했을 경우
+
+
+                                if(submitAnswerList[currentQuestionIndex] != null){ //답변을 제출했을 경우
+                                    if(currentQuestionIndex == questionList.size - 1){
+                                        showDialog = true
+                                        surveyViewModel.submitSurvey(
+                                            seniorId = seniorId,
+                                            answerList = submitAnswerList.map { it!! },
+                                        )
+                                    }else{
+                                        submitAnswerList.add(null)
                                         currentQuestionIndex++
                                         isAnswerSelected = true
-                                    }else{
-                                        isAnswerSelected = false
                                     }
+                                }else{
+                                    isAnswerSelected = false
                                 }
+
                             },
                         )
                     }

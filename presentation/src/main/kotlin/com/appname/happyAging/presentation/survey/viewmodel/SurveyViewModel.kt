@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.survey.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.appname.happyAging.domain.model.common.onFailure
@@ -27,6 +28,7 @@ class SurveyViewModel @Inject constructor(
 
     init {
         getSurvey()
+        Log.d("SurveyViewModel", "init viewModel")
     }
 
     fun getSurvey() {

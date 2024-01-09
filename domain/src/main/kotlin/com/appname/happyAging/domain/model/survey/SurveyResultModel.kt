@@ -26,7 +26,7 @@ class SurveyResultModel(
                 resultId = 1,
                 date = LocalDate.now(),
                 rank = 1,
-                summary = "summary"
+                summary = summary
             )
         }
     }

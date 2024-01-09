@@ -1,7 +1,8 @@
 package com.appname.happyAging.presentation.survey.navigation
 
-import android.util.Log
+import android.annotation.SuppressLint
 import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -21,6 +22,7 @@ enum class SurveyRouter(
     SURVEY_RESULT("survey-result", "낙상 위험 측정 결과"),
 }
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 fun NavGraphBuilder.surveyGraph(
     navController: NavController,
     onOpenSourceClick: () -> Unit = {},
@@ -43,20 +45,22 @@ fun NavGraphBuilder.surveyGraph(
         }
         composable(route = SurveyRouter.SURVEY.routePath) {
             val parentEntry = remember(it){navController.getBackStackEntry(SURVEY_GRAPH_ROUTE_PATTERN)}
-            val seniorId = parentEntry.arguments?.getString("id")?.toLong()
-            Log.d("SurveyNavigation", "seniorId: $seniorId")
+            val seniorId = parentEntry.arguments?.getString("id")?.toLong()!!
             SurveyScreen(
+                seniorId = seniorId,
                 onSubmitButtonClick = {
-                    navController.navigate(SurveyRouter.SURVEY_RESULT.routePath){
-                        popUpTo(SurveyRouter.SURVEY.routePath){
-                            inclusive = true
-                        }
-                    }
+                    navController.navigate(SurveyRouter.SURVEY_RESULT.routePath)
                 }
             )
         }
         composable(route = SurveyRouter.SURVEY_RESULT.routePath) {
-            SurveyResultScreen()
+            val parentEntry = remember { navController.getBackStackEntry(SurveyRouter.SURVEY.routePath) }
+            SurveyResultScreen(
+                onBackButtonClick = {
+                    navController.popBackStack(SURVEY_GRAPH_ROUTE_PATTERN, inclusive = true)
+                },
+                surveyViewModel = hiltViewModel(parentEntry),
+            )
         }
 
     }
