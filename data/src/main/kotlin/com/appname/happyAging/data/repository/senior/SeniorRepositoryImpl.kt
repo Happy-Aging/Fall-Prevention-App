@@ -20,10 +20,10 @@ class SeniorRepositoryImpl @Inject constructor(
         runCatching {
             apiService.getSeniorList()
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(it.body()!!.map { dto -> dto.toDomain() })
             }
-            return ApiResponse.Success(it.body()!!.map { dto -> dto.toDomain() })
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -34,10 +34,10 @@ class SeniorRepositoryImpl @Inject constructor(
         runCatching {
             apiService.createSenior(createSeniorParams.toData())
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(it.body()!!)
             }
-            return ApiResponse.Success(it.body()!!)
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -48,10 +48,10 @@ class SeniorRepositoryImpl @Inject constructor(
         runCatching {
             apiService.updateSenior(updateSeniorParams.id,updateSeniorParams.toData())
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(Unit)
             }
-            return ApiResponse.Success(Unit)
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -62,10 +62,10 @@ class SeniorRepositoryImpl @Inject constructor(
         runCatching {
             apiService.deleteSenior(id)
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(Unit)
             }
-            return ApiResponse.Success(Unit)
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }

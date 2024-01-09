@@ -19,10 +19,10 @@ class UserRepositoryImpl @Inject constructor(
         runCatching {
             apiService.getUser()
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(it.body()!!.toDomain())
             }
-            return ApiResponse.Success(it.body()!!.toDomain())
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -33,10 +33,10 @@ class UserRepositoryImpl @Inject constructor(
         runCatching {
             apiService.updateUser(updateUserParams.toData())
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(Unit)
             }
-            return ApiResponse.Success(Unit)
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -47,10 +47,10 @@ class UserRepositoryImpl @Inject constructor(
         runCatching{
             apiService.deleteUser()
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(Unit)
             }
-            return ApiResponse.Success(Unit)
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }

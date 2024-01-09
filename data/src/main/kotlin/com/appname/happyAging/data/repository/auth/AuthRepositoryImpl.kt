@@ -26,10 +26,10 @@ class AuthRepositoryImpl @Inject constructor(
         runCatching {
             apiService.login(loginParams.toData())
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(it.body()!!.toDomain())
             }
-            return ApiResponse.Success(it.body()!!.toDomain())
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -40,8 +40,8 @@ class AuthRepositoryImpl @Inject constructor(
         runCatching {
             apiService.loginSocial(socialLoginParams.toData())
         }.onSuccess {
-            if(!it.isSuccessful){
-                return ApiResponse.Error(it.message())
+            if(it.isSuccessful){
+                return ApiResponse.Success(SocialInfoModel.Success(it.body()!!.toDomain()))
             }else if(it.code() == 401){
                 val errorBody = it.errorBody()?.string()
                 val gson = Gson()
@@ -50,7 +50,7 @@ class AuthRepositoryImpl @Inject constructor(
                 val vendor = VendorType.valueOf(responseJson["vendor"].toString())
                 return ApiResponse.Success(SocialInfoModel.Progress(email, vendor))
             }
-            return ApiResponse.Success(SocialInfoModel.Success(it.body()!!.toDomain()))
+            return ApiResponse.Error(it.message())
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
@@ -58,7 +58,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun signup(signupParams: SignupParams) : ApiResponse<JwtToken>{
-        kotlin.runCatching {
+        runCatching {
             val resp = if(signupParams.password == null) {
                 apiService.socialSignup(signupParams.toSocialSignupData())
             }else{
