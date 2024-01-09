@@ -17,43 +17,46 @@ class UserRepositoryImpl @Inject constructor(
 ) : UserRepository {
     override suspend fun getUser(): ApiResponse<UserModel> {
         runCatching {
-            apiService.getUser()
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(it.body()!!.toDomain())
+            val resp = apiService.getUser()
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!.toDomain())
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun updateUser(updateUserParams: UpdateUserParams) : ApiResponse<Unit>{
         runCatching {
-            apiService.updateUser(updateUserParams.toData())
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(Unit)
+            val resp = apiService.updateUser(updateUserParams.toData())
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(Unit)
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun deleteUser() : ApiResponse<Unit>{
         runCatching{
-            apiService.deleteUser()
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(Unit)
+            val resp = apiService.deleteUser()
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(Unit)
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 }

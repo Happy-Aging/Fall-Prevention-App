@@ -1,5 +1,6 @@
 package com.appname.happyAging.data.repository.survey
 
+import com.appname.happyAging.data.api.ApiConstants
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.data.dto.survey.request.toData
 import com.appname.happyAging.data.dto.survey.response.toDomain
@@ -21,15 +22,18 @@ class SurveyRepositoryImpl @Inject constructor(
             SurveyQuestionModel.fixture(),
             SurveyQuestionModel.fixture(),
         ))
-        val resp = apiService.getSurveyQuestionList()
-        if(!resp.isSuccessful){
-            return ApiResponse.Error(resp.message())
+        runCatching {
+            val resp = apiService.getSurveyQuestionList()
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!.map { it.toDomain() })
+            }
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
+        }.onFailure {
+            return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return kotlin.runCatching { //변환과정 중에 에러가 발생할 수 있으므로 runCatching을 사용
-            ApiResponse.Success(resp.body()!!.map { it.toDomain() })
-        }.getOrElse {
-            ApiResponse.Error(it.message ?: "Internal Server Question Error 500")
-        }
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun submitSurvey(
@@ -37,21 +41,35 @@ class SurveyRepositoryImpl @Inject constructor(
         surveySubmitList: List<SurveySubmitParams>
     ): ApiResponse<SurveyResultModel> {
         return ApiResponse.Success(SurveyResultModel.fixture())
-        val resp = apiService.submitSurvey(seniorId,surveySubmitList.map { it.toData() })
-        if(resp.isSuccessful){
-            return ApiResponse.Error(resp.message())
+        runCatching {
+            val resp = apiService.submitSurvey(seniorId,surveySubmitList.map { it.toData() })
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!.toDomain())
+            }
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
+        }.onFailure {
+            return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Success(resp.body()!!.toDomain())
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun getPreviousSurveyResult(seniorId: Long): ApiResponse<List<SurveyResultModel>> {
         return ApiResponse.Success(listOf(
             SurveyResultModel.fixture(),
         ))
-        val resp = apiService.getPreviousSurveyResultList(seniorId)
-        if(resp.isSuccessful){
-            return ApiResponse.Success(resp.body()!!.map { it.toDomain() })
+        runCatching {
+            val resp = apiService.getPreviousSurveyResultList(seniorId)
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!.map { it.toDomain() })
+            }
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
+        }.onFailure {
+            return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error(resp.message())
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 }

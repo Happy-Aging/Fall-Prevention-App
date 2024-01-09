@@ -24,37 +24,40 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     override suspend fun login(loginParams: LoginParams): ApiResponse<JwtToken> {
         runCatching {
-            apiService.login(loginParams.toData())
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(it.body()!!.toDomain())
+            val resp = apiService.login(loginParams.toData())
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!.toDomain())
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun socialLogin(socialLoginParams: SocialLoginParams): ApiResponse<SocialInfoModel> {
         runCatching {
-            apiService.loginSocial(socialLoginParams.toData())
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(SocialInfoModel.Success(it.body()!!.toDomain()))
-            }else if(it.code() == 401){
-                val errorBody = it.errorBody()?.string()
+            val resp = apiService.loginSocial(socialLoginParams.toData())
+
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(SocialInfoModel.Success(resp.body()!!.toDomain()))
+            }else if(resp.code() == 401){
+                val errorBody = resp.errorBody()?.string()
                 val gson = Gson()
                 val responseJson = gson.fromJson(errorBody, Map::class.java)
                 val email = responseJson["email"].toString()
                 val vendor = VendorType.valueOf(responseJson["vendor"].toString())
-                return ApiResponse.Success(SocialInfoModel.Progress(email, vendor))
+                return@runCatching ApiResponse.Success(SocialInfoModel.Progress(email, vendor))
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun signup(signupParams: SignupParams) : ApiResponse<JwtToken>{
@@ -74,6 +77,6 @@ class AuthRepositoryImpl @Inject constructor(
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 }

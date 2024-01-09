@@ -18,58 +18,62 @@ class SeniorRepositoryImpl @Inject constructor(
 ) : SeniorRepository {
     override suspend fun getSeniorList(): ApiResponse<List<SeniorModel>> {
         runCatching {
-            apiService.getSeniorList()
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(it.body()!!.map { dto -> dto.toDomain() })
+            val resp = apiService.getSeniorList()
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!.map { dto -> dto.toDomain() })
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun createSenior(createSeniorParams: CreateSeniorParams): ApiResponse<Long> {
         runCatching {
-            apiService.createSenior(createSeniorParams.toData())
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(it.body()!!)
+            val resp = apiService.createSenior(createSeniorParams.toData())
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(resp.body()!!)
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun updateSenior(updateSeniorParams: UpdateSeniorParams) : ApiResponse<Unit>{
         runCatching {
-            apiService.updateSenior(updateSeniorParams.id,updateSeniorParams.toData())
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(Unit)
+            val resp = apiService.updateSenior(updateSeniorParams.id,updateSeniorParams.toData())
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(Unit)
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
     override suspend fun deleteSenior(id: Long) : ApiResponse<Unit> {
         runCatching {
-            apiService.deleteSenior(id)
-        }.onSuccess {
-            if(it.isSuccessful){
-                return ApiResponse.Success(Unit)
+            val resp = apiService.deleteSenior(id)
+            if(resp.isSuccessful){
+                return@runCatching ApiResponse.Success(Unit)
             }
-            return ApiResponse.Error(it.message())
+            return@runCatching ApiResponse.Error(resp.message())
+        }.onSuccess {
+            return it
         }.onFailure {
             return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Error("Unknown Error")
+        return ApiResponse.Error(ApiConstants.UNKNOWN_ERROR)
     }
 
 }
