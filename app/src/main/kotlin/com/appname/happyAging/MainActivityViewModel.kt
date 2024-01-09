@@ -20,6 +20,11 @@ class MainActivityViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
     val uiState : StateFlow<MainActivityUiState> = flow{
+        val token = jwtTokenRepository.getJwtToken()
+        if(token == null){
+            emit(MainActivityUiState.Success(null))
+            return@flow
+        }
         userRepository.getUser()
         .onSuccess {
             emit(MainActivityUiState.Success(it))
