@@ -1,5 +1,6 @@
 package com.appname.happyAging.presentation.survey.navigation
 
+import android.util.Log
 import androidx.compose.runtime.remember
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -29,12 +30,24 @@ fun NavGraphBuilder.surveyGraph(
         startDestination = SurveyRouter.SURVEY_GUIDE.routePath,
     ) {
         composable(route = SurveyRouter.SURVEY_GUIDE.routePath) {
-            val parentEntry = remember(it){navController.getBackStackEntry(SURVEY_GRAPH_ROUTE_PATTERN)}
-            val seniorId = parentEntry.arguments?.getString("id")?.toLong()
-            SurveyGuideScreen()
+            SurveyGuideScreen(
+                onBackButtonClick = { navController.popBackStack() },
+                onStartSurveyClick = {
+                    navController.navigate(SurveyRouter.SURVEY.routePath){
+                        popUpTo(SurveyRouter.SURVEY_GUIDE.routePath){
+                            inclusive = true
+                        }
+                    }
+                },
+            )
         }
         composable(route = SurveyRouter.SURVEY.routePath) {
-            SurveyScreen()
+            val parentEntry = remember(it){navController.getBackStackEntry(SURVEY_GRAPH_ROUTE_PATTERN)}
+            val seniorId = parentEntry.arguments?.getString("id")?.toLong()
+            Log.d("SurveyNavigation", "seniorId: $seniorId")
+            SurveyScreen(
+
+            )
         }
         composable(route = SurveyRouter.SURVEY_RESULT.routePath) {
             SurveyResultScreen()

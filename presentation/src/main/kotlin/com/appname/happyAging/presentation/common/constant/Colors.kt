@@ -15,4 +15,6 @@ object Colors {
 
     val SELECTED_ICON = Color(0xFF626262)
     val UNSELECTED_ICON = Color(0xFFD9D9D9)
+
+    val DARK_BLACK = Color(0xFF292929)
 }
