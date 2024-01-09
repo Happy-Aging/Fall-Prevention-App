@@ -1,8 +1,10 @@
 package com.appname.happyAging.presentation.survey.view
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -34,11 +37,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.appname.happyAging.domain.model.survey.SurveyQuestionOptionModel
 import com.appname.happyAging.domain.params.survey.SurveySubmitParams
+import com.appname.happyAging.presentation.R
 import com.appname.happyAging.presentation.common.component.CommonButton
 import com.appname.happyAging.presentation.common.component.CustomTextEditField
 import com.appname.happyAging.presentation.common.constant.Colors
@@ -58,7 +64,12 @@ fun SurveyScreen(
 
     var currentQuestionIndex by rememberSaveable { mutableStateOf(0) }
     var isAnswerSelected by rememberSaveable { mutableStateOf(true) }
-
+    var isSubmitOk by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(isSubmitOk){
+        if(isSubmitOk){
+            onSubmitButtonClick()
+        }
+    }
     LaunchedEffect(isAnswerSelected){//답변 미선택시 snackbar
         if(!isAnswerSelected){
             snackbarHostState.showSnackbar(
@@ -84,6 +95,8 @@ fun SurveyScreen(
                     val questionList = (state.value as UiState.Success).data
                     val currentQuestion = questionList[currentQuestionIndex]
                     val submitAnswerList : MutableList<SurveySubmitParams?> = List(questionList.size) { null }.toMutableList()
+
+                    var showDialog by rememberSaveable { mutableStateOf(false) }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -138,7 +151,7 @@ fun SurveyScreen(
                             color = Colors.DARK_BLACK,
                             onClick = {
                                 if(currentQuestionIndex == questionList.size - 1){
-                                    //TODO
+                                    showDialog = true
                                     onSubmitButtonClick()
                                 }else{
                                     if(submitAnswerList[currentQuestionIndex] != null){ //답변을 제출했을 경우
@@ -152,6 +165,39 @@ fun SurveyScreen(
                         )
                     }
 
+                    if(showDialog){
+                        Dialog(onDismissRequest = {
+                            showDialog = false
+                        }) {
+                            surveyViewModel.surveyResult.collectAsState().value.let {
+                                if(it is UiState.Success){
+                                    isSubmitOk = true
+                                }
+                            }
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(Color.White)
+                                    .padding(
+                                        horizontal = 18.dp,
+                                        vertical = 16.dp,
+                                    ),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = "제출 내용의 보고서를 생성 중입니다.\n조금만 더 기다려 주세요.",
+                                    style = TextStyles.TITLE_MEDIUM2,
+                                    modifier = Modifier.align(Alignment.Start)
+                                )
+                                Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
+                                Image(painter = painterResource(id = R.drawable.robot), contentDescription = null)
+                                Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
+                                CircularProgressIndicator()
+                                Spacer(modifier = Modifier.height(Sizes.INTERVAL_LARGE4))
+                            }
+                        }
+                    }
                 }
             }
         }

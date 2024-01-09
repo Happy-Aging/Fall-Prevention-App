@@ -46,7 +46,13 @@ fun NavGraphBuilder.surveyGraph(
             val seniorId = parentEntry.arguments?.getString("id")?.toLong()
             Log.d("SurveyNavigation", "seniorId: $seniorId")
             SurveyScreen(
-
+                onSubmitButtonClick = {
+                    navController.navigate(SurveyRouter.SURVEY_RESULT.routePath){
+                        popUpTo(SurveyRouter.SURVEY.routePath){
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
         composable(route = SurveyRouter.SURVEY_RESULT.routePath) {

@@ -2,7 +2,6 @@ package com.appname.happyAging.presentation.survey.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.appname.happyAging.domain.model.common.ApiResponse
 import com.appname.happyAging.domain.model.common.onFailure
 import com.appname.happyAging.domain.model.common.onSuccess
 import com.appname.happyAging.domain.model.survey.SurveyQuestionModel
@@ -23,6 +22,9 @@ class SurveyViewModel @Inject constructor(
     val survey: StateFlow<UiState<List<SurveyQuestionModel>>> get() = _survey
     private val _survey = MutableStateFlow<UiState<List<SurveyQuestionModel>>>(UiState.Loading)
 
+    val surveyResult: StateFlow<UiState<SurveyResultModel>> get() = _surveyResult
+    private val _surveyResult = MutableStateFlow<UiState<SurveyResultModel>>(UiState.Loading)
+
     init {
         getSurvey()
     }
@@ -38,13 +40,19 @@ class SurveyViewModel @Inject constructor(
         }
     }
 
-    suspend fun submitSurvey(
+    fun submitSurvey(
         seniorId : Long,
         answerList : List<SurveySubmitParams>
-    ) : ApiResponse<SurveyResultModel> {
-        return surveyRepository.submitSurvey(
-            seniorId = seniorId,
-            surveySubmitList = answerList
-        )
+    ) {
+        viewModelScope.launch {
+            surveyRepository.submitSurvey(
+                seniorId = seniorId,
+                surveySubmitList = answerList
+            ).onSuccess {
+                _surveyResult.value = UiState.Success(it)
+            }.onFailure {
+                _surveyResult.value = UiState.Error(it)
+            }
+        }
     }
 }
