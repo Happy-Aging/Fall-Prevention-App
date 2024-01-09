@@ -1,5 +1,6 @@
 package com.appname.happyAging.data.repository.user
 
+import com.appname.happyAging.data.api.ApiConstants
 import com.appname.happyAging.data.api.ApiService
 import com.appname.happyAging.data.dto.user.request.toData
 import com.appname.happyAging.data.dto.user.response.toDomain
@@ -15,26 +16,44 @@ class UserRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : UserRepository {
     override suspend fun getUser(): ApiResponse<UserModel> {
-        val resp = apiService.getUser()
-        if(!resp.isSuccessful){
-            return ApiResponse.Error(resp.message())
+        runCatching {
+            apiService.getUser()
+        }.onSuccess {
+            if(!it.isSuccessful){
+                return ApiResponse.Error(it.message())
+            }
+            return ApiResponse.Success(it.body()!!.toDomain())
+        }.onFailure {
+            return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Success(resp.body()!!.toDomain())
+        return ApiResponse.Error("Unknown Error")
     }
 
     override suspend fun updateUser(updateUserParams: UpdateUserParams) : ApiResponse<Unit>{
-        val resp = apiService.updateUser(updateUserParams.toData())
-        if(!resp.isSuccessful){
-            return ApiResponse.Error(resp.message())
+        runCatching {
+            apiService.updateUser(updateUserParams.toData())
+        }.onSuccess {
+            if(!it.isSuccessful){
+                return ApiResponse.Error(it.message())
+            }
+            return ApiResponse.Success(Unit)
+        }.onFailure {
+            return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Success(Unit)
+        return ApiResponse.Error("Unknown Error")
     }
 
     override suspend fun deleteUser() : ApiResponse<Unit>{
-        val resp = apiService.deleteUser()
-        if(!resp.isSuccessful){
-            return ApiResponse.Error(resp.message())
+        runCatching{
+            apiService.deleteUser()
+        }.onSuccess {
+            if(!it.isSuccessful){
+                return ApiResponse.Error(it.message())
+            }
+            return ApiResponse.Success(Unit)
+        }.onFailure {
+            return ApiResponse.Error(ApiConstants.ERROR)
         }
-        return ApiResponse.Success(Unit)
+        return ApiResponse.Error("Unknown Error")
     }
 }
