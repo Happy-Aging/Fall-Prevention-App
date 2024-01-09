@@ -17,18 +17,18 @@ class SeniorRepositoryImpl @Inject constructor(
 ) : SeniorRepository {
     override suspend fun getSeniorList(): ApiResponse<List<SeniorModel>> {
         val resp = apiService.getSeniorList()
-        if(resp.isSuccessful){
-            return ApiResponse.Success(resp.body()!!.map { it.toDomain() })
+        if(!resp.isSuccessful){
+            return ApiResponse.Error(resp.message())
         }
-        return ApiResponse.Error(resp.message())
+        return ApiResponse.Success(resp.body()!!.map { it.toDomain() })
     }
 
     override suspend fun createSenior(createSeniorParams: CreateSeniorParams): ApiResponse<Long> {
         val resp = apiService.createSenior(createSeniorParams.toData())
-        if(resp.isSuccessful){
-            return ApiResponse.Success(resp.body()!!)
+        if(!resp.isSuccessful){
+            return ApiResponse.Error(resp.message())
         }
-        return ApiResponse.Error(resp.message())
+        return ApiResponse.Success(resp.body()!!)
     }
 
     override suspend fun updateSenior(updateSeniorParams: UpdateSeniorParams) : ApiResponse<Unit>{

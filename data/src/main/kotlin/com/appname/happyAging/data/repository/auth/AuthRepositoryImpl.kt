@@ -23,10 +23,10 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     override suspend fun login(loginParams: LoginParams): ApiResponse<JwtToken> {
         val resp = apiService.login(loginParams.toData())
-        if(resp.isSuccessful){
-            return ApiResponse.Success(resp.body()!!.toDomain())
+        if(!resp.isSuccessful){
+            return ApiResponse.Error(resp.message())
         }
-        return ApiResponse.Error(resp.message())
+        return ApiResponse.Success(resp.body()!!.toDomain())
     }
 
     override suspend fun socialLogin(socialLoginParams: SocialLoginParams): ApiResponse<SocialInfoModel> {
@@ -48,17 +48,17 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signup(signupParams: SignupParams) : ApiResponse<JwtToken>{
         return if(signupParams.password == null){
             val resp = apiService.socialSignup(signupParams.toSocialSignupData())
-            if(resp.isSuccessful) {
-                ApiResponse.Success(resp.body()!!.toDomain())
-            }else{
+            if(!resp.isSuccessful) {
                 ApiResponse.Error(resp.message())
+            }else{
+                ApiResponse.Success(resp.body()!!.toDomain())
             }
         }else{
             val resp = apiService.signup(signupParams.toEmailSignupData())
-            if(resp.isSuccessful) {
-                ApiResponse.Success(resp.body()!!.toDomain())
-            }else{
+            if(!resp.isSuccessful) {
                 ApiResponse.Error(resp.message())
+            }else{
+                ApiResponse.Success(resp.body()!!.toDomain())
             }
         }
     }
